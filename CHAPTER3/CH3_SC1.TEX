@@ -1,0 +1,326 @@
+
+\section{Регресія опорних векторів. Робастність}
+
+Розглянемо популярний в останні роки підхід, який започаткований
+В.Вапником~\cite{Vapnik-SLT,Vapnik-Golowich-Smola} і відомий як
+механізм опорних векторів (МОВ). Це універсальний алгоритм побудови
+моделей, що навчаються, заснований на теорії статистичного
+навчання~\cite{Vapnik-NSLT}, який реалізує принцип мінімізації
+структурного ризику. В основу покладені ідеї методу потенціальних
+функцій М.Айзермана~\cite{Izerman-Braverman-Rozonoer}.
+
+Механізм опорних векторів може бути застосований для задач побудови
+регресії, якщо відповідним чином визначити критерій оптимізації,
+тобто функцію ризику, а саме --- застосувати міру відстані.
+
+Припустимо, що справжній процес описується невідомою функцією
+$y(\mathbf{x})$ вектору вхідних змінних $\mathbf{x}\in\mathcal{X}$,
+де розмірність вхідного простору $\dim\mathcal{X}=n$. Позначимо
+через $\mathcal{M}(\mathbf{x},\mathbf{w})$ сімейство (ансамбль,
+клас) функцій $f$ параметризоване вектором параметрів $\mathbf{w}$.
+Припустимо також, що невідома залежність $y(\mathbf{x})$ належить
+сімейству $\mathcal{M}(\mathbf{x},\mathbf{w})$. Позначимо через
+$\hat{\mathbf{w}}$ значення $\mathbf{w}$, яке мінімізує деяку міру
+похибки між $y(\mathbf{x})$ та
+$\mathcal{M}(\mathbf{x},\hat{\mathbf{w}})$. Метою ідентифікації
+процесу є знаходження оцінки невідомого вектору параметрів
+$\hat{\mathbf{w}}$ за даними навчальної вибірки $\mathcal{D}=\{(y_j,
+\mathbf{x}_j): j=1,\ldots,N\}$ за умови, що шум адитивний:
+$$
+y_j=f(\mathbf{x}_j)+\delta_j,
+$$
+де $\delta_j$ --- незалежні і однаково розподілені випадкові
+величини.
+
+\subsection{Лінійна регресія опорних векторів}
+
+Розглянемо клас лінійних функцій:
+$$
+\mathcal{M}(\mathbf{x},\mathbf{w})=\langle\mathbf{w},\mathbf{x}\rangle_\mathcal{X}+b,
+\quad \mathbf{w}\in\mathcal{X},\quad b\in\mathbb{R},
+$$
+де $\langle\cdot,\cdot\rangle_\mathcal{X}$ означає скалярний добуток
+в просторі $\mathcal{X}$. Класична лінійна регресія опорних векторів
+має за мету знайти таке значення вектору параметрів $\mathbf{w}$, що
+відповідна функція
+$f(\mathbf{x})=\mathcal{M}(\mathbf{x},\mathbf{w})$ має не більше ніж
+$\epsilon$-відхилення від реальних значень виходу $y_j$ і при цьому
+є якомога гладкою~\cite{Smola-Scholkopf}. Одним із поширених
+способів забезпечити найбільшу гладкість є мінімізація норми вектору
+параметрів~\cite{Wei-Keerthi,Gunn,Smola}, тобто
+$\|\mathbf{w}\|_\mathcal{X}^2=\langle\mathbf{w},\mathbf{w}\rangle_\mathcal{X}$.
+Тоді ідентифікація процесу зводиться до наступної задачі випуклої
+оптимізації:
+$$
+\frac{1}{2}\|\mathbf{w}\|_\mathcal{X}^2\longrightarrow\min,
+$$
+з обмеженнями:
+$$
+\left\{\begin{array}{c}y_j-\langle\mathbf{w},\mathbf{x}_j\rangle_\mathcal{X}-b\leqslant\epsilon\\
+-y_j+\langle\mathbf{w},\mathbf{x}_j\rangle_\mathcal{X}+b\leqslant\epsilon\end{array}\right..
+$$
+Однак задача випуклої оптимізації в такому вигляді не завжди
+розв'язна, оскільки система рівнянь обмежень може бути несумісною.
+Тож набагато зручніше розглядати наступну (м'яку) постановку:
+\begin{equation}
+\label{SVR-lin-min}
+\frac{1}{2}\|\mathbf{w}\|_\mathcal{X}^2+\beta\sum_{j=1}^N\left(\xi_j+\xi_j^\ast\right)\longrightarrow\min,
+\end{equation}
+з обмеженнями:
+\begin{equation}
+\label{SVR-lin-subj}
+\left\{\begin{array}{c}y_j-\langle\mathbf{w},\mathbf{x}_j\rangle_\mathcal{X}-b\leqslant\epsilon+\xi_j\\
+-y_j+\langle\mathbf{w},\mathbf{x}_j\rangle_\mathcal{X}+b\leqslant\epsilon+\xi_j^\ast\\
+\xi_j,\xi_j^\ast\geqslant 0\end{array}\right..
+\end{equation}
+де $\xi_j,\xi_j^\ast$ --- штрафні змінні (змінні нежорсткості) за
+порушення того чи іншого обмеження. Константа $\beta>0$ грає роль
+балансу між гладкістю функції $f$ і ступінню виконання обмежень,
+тобто точністю апроксимації. Фактично $\beta$ має зміст коефіцієнту
+регуляризації.
+
+В контексті статистичної теорії навчання задачу ідентифікації
+процесу можна сформулювати як задачу мінімізації регуляризованого
+ризику представленого як~\cite{Smola-Scholkopf-2}:
+$$
+R_{reg}(f)=R_{emp}(f)+\lambda\Theta(f),\quad \lambda\geqslant0
+$$
+де емпіричний ризик:
+$$
+R_{emp}(f)=\frac{1}{N}\sum_{j=1}^N\mathcal{C}\left(y_j-\langle\mathbf{w},\mathbf{x}_j\rangle_\mathcal{X}-b\right),
+$$
+а величина $\Theta(f)$ --- характеристика складності моделі. Функція
+$\mathcal{C}$ називається функцією втрат. Якщо в якості складності
+моделі взяти гладкість її функції представлення, а в якості функції
+втрат взяти запропоновану Вапником~\cite{Vapnik-SLT}
+$\epsilon$-нечутливу функцію:
+$$
+\mathcal{C}_\epsilon(\delta)=|\delta|_\epsilon=\left\{\begin{array}{rl}0,
+& \mbox{для}\quad |\delta|\leqslant\epsilon\\|\delta|-\epsilon, &
+\mbox{для}\quad |\delta|>\epsilon\end{array}\right.,
+$$
+то мінімізація структурного ризику
+$$
+R_{reg}(f)=\frac{1}{N}\sum_{j=1}^N\left|y_j-\langle\mathbf{w},\mathbf{x}_j\rangle_\mathcal{X}-b\right|_\epsilon
++\frac{\lambda}{2}\|\mathbf{w}\|_\mathcal{X}^2
+$$
+відповідає випуклій
+оптимізації~(\ref{SVR-lin-min}-\ref{SVR-lin-subj}) за умови, якщо
+$$
+\beta=\frac{1}{N\lambda}.
+$$
+
+\subsection{Нелінійна регресія опорних векторів}
+
+Якщо ж припустити, що справжня залежність нелінійна і може бути
+описана лінійною в параметрах моделлю шляхом попереднього
+відображення простору вхідних змінних $\mathcal{X}$ розмірності $n$
+в деякий багатовимірний характеристичний простір\footnote{В термінах
+методу потенціальних функцій М.Айзермана цей простір називають
+спрямляючим~\cite{Izerman-Braverman-Rozonoer}} (англ. feature space)
+$\mathcal{F}$ розмірності $q$ (як правило $n\ll q$), то задача
+нелінійної регресії опорних векторів у вхідному просторі зводиться
+до лінійної в характеристичному:
+\begin{equation}
+\label{SVR-nonlin-func}
+\mathcal{M}(\mathbf{x},\mathbf{w})=\langle\mathbf{w},\Phi(\mathbf{x})\rangle_\mathcal{F}+b,
+\quad \mathbf{w}\in\mathcal{F},\quad b\in\mathbb{R},\quad
+\Phi:\mathcal{X}\rightarrow\mathcal{F}.
+\end{equation}
+Оптимізаційна задача при цьому приймає вигляд:
+\begin{equation}
+\label{SVR-nonlin-min}
+\frac{1}{2}\|\mathbf{w}\|_\mathcal{F}^2+\beta\sum_{j=1}^N\left(\xi_j+\xi_j^\ast\right)\longrightarrow\min,
+\end{equation}
+з обмеженнями:
+\begin{equation}
+\label{SVR-nonlin-subj}
+\left\{\begin{array}{c}y_j-\langle\mathbf{w},\Phi(\mathbf{x}_j)\rangle_\mathcal{F}-b\leqslant\epsilon+\xi_j\\
+-y_j+\langle\mathbf{w},\Phi(\mathbf{x}_j)\rangle_\mathcal{F}+b\leqslant\epsilon+\xi_j^\ast\\
+\xi_j,\xi_j^\ast\geqslant 0\end{array}\right..
+\end{equation}
+Графічне зображення побудови регресії з використанням
+$\epsilon$-нечутливої смуги представлене на рис.~\ref{fig:softloss}.
+Такий вигляд функції втрат забезпечує робастність моделей РОВ, яка
+полягає в невисокій чутливості до зміни значень входів за межами
+$\epsilon$-смуги і в абсолютній нечутливості в межах
+$\epsilon$-смуги.
+
+\begin{figure}[ht]
+\safepdf{\centerline{\includegraphics[height=7cm]{CHAPTER3/EPS/SoftLoss.pdf}}}
+{\centerline{\psfig{figure=CHAPTER3/EPS/SoftLoss.eps,height=7cm}}}
+\caption{$\epsilon$-нечутлива смуга регресії опорних векторів.}
+\label{fig:softloss}
+\end{figure}
+Очевидно, що задача~(\ref{SVR-nonlin-min}-\ref{SVR-nonlin-subj}) є
+задачею знаходження умовного екстремуму і для її розв'язання зручно
+використати множники Лагранжа
+$\alpha_j$,$\gamma_j$,$\alpha_j^\ast$,$\gamma_j^\ast$ і записати
+функцію Лагранжа у вигляді:
+\begin{multline}
+\label{Lagrange-SVR}
+L=\frac{1}{2}\langle\mathbf{w},\mathbf{w}\rangle_\mathcal{F}+\beta\sum_{j=1}^N\left(\xi_j+\xi_j^\ast\right)
++\sum_{j=1}^N\alpha_j\left(y_j-\langle\mathbf{w},\Phi(\mathbf{x}_j)\rangle_\mathcal{F}-b-\epsilon-\xi_j\right)+\\
++\sum_{j=1}^N\alpha_j^\ast\left(-y_j+\langle\mathbf{w},\Phi(\mathbf{x}_j)\rangle_\mathcal{F}+b-\epsilon-\xi_j^\ast\right)
+-\sum_{j=1}^N\left(\gamma_j\xi_j+\gamma_j^\ast\xi_j^\ast\right).
+\end{multline}
+При чому
+$\alpha_j,\gamma_j,\alpha_j^{\ast},\gamma_j^{\ast}\geqslant0$.
+Оптимальність досягається в сідловій точці за умови рівності нулю
+частинних похідних:
+\begin{equation}
+\label{Lagrange-opt-inSVR} \left\{
+\begin{array}{l}
+\partial_b L=\sum_{j=1}^N\left(\alpha_j^\ast-\alpha_j\right)=0,\\
+\partial_\mathbf{w}L=\mathbf{w}-\sum_{j=1}^N\left(\alpha_j-\alpha_j^\ast\right)\Phi(\mathbf{x}_j)=\mathbf{0},\\
+\partial_{\xi_j}L=\beta-\alpha_j-\gamma_j=0\\
+\partial_{\xi_j^\ast}L=\beta-\alpha_j^\ast-\gamma_j^\ast=0.
+\end{array}\right.
+\end{equation}
+Підставляючи рівності~(\ref{Lagrange-opt-inSVR}) в лагранжиан
+~(\ref{Lagrange-SVR}) отримаємо цільову функцію двоїстої задачі
+максимізації у наступному вигляді:
+\begin{multline}
+\label{dual-max-SVR}
+W\left(\alpha,\alpha^\ast\right)=-\frac{1}{2}\sum_{i,j=1}^N\left(\alpha_i-\alpha_i^\ast\right)\left(\alpha_j-\alpha_j^\ast\right)
+\langle\Phi(\mathbf{x}_i),\Phi(\mathbf{x}_j)\rangle_\mathcal{F}-\\-\epsilon\sum_{j=1}^N\left(\alpha_j+\alpha_j^\ast\right)
++\sum_{j=1}^Ny_j\left(\alpha_j-\alpha_j^\ast\right),
+\end{multline}
+з обмеженнями:
+$$
+\sum_{j=1}^N\left(\alpha_j-\alpha_j^\ast\right)=0, \quad
+\alpha_j,\alpha_j^\ast\in[0;\beta].
+$$
+Перехід до двоїстої задачі значно спрощує розв'язання задачі
+оптимізації особливо у випадках, коли розмірність характеристичного
+простору $q$ більша за розмір вибірки $N$. Крім цього за умовами
+доповнюючої нежорсткості теореми Каруш-Куна-Таккера отримуємо:
+$$
+\left\{
+\begin{array}{l}
+\alpha_j\left(y_j-\langle\mathbf{w},\Phi(\mathbf{x}_j)\rangle_\mathcal{F}-b-\epsilon-\xi_j\right)=0,
+\\
+\alpha_j^\ast\left(-y_j+\langle\mathbf{w},\Phi(\mathbf{x}_j)\rangle_\mathcal{F}+b-\epsilon-\xi_j^\ast\right)=0,
+\\
+(\beta-\alpha_j)\xi_j=0,\\
+(\beta-\alpha_j^\ast)\xi_j^\ast=0.
+\end{array}\right.
+$$
+Звідси можна зробити очевидні висновки:
+\begin{enumerate}
+\item Точки які лежать строго вище $\epsilon$-нечутливої смуги
+мають $\alpha=\beta$,$\alpha^\ast=0$. \item Точки які лежать строго
+нижче $\epsilon$-нечутливої смуги мають
+$\alpha=0$,$\alpha^\ast=\beta$.
+\item Точки які лежать строго в $\epsilon$-нечутливій смузі мають
+$\alpha=0$,$\alpha^\ast=0$.\item Не існує такої точки для якої
+обидва множники Лагранжа одночасно були б ненульові. Це означає, що
+завжди має місце рівність:
+$$
+\alpha_j\alpha_j^\ast=0, \quad j=1,\ldots,N.
+$$
+\end{enumerate}
+Зміщення моделі $b$ визначається з рівняння:
+$$
+y_j-\langle\mathbf{w},\Phi(\mathbf{x}_j)\rangle_\mathcal{F}-b=\epsilon,
+\quad \mbox{при} \quad \alpha_j\in(0;\beta),\quad\xi_j=0.
+$$
+Звідси визначаються {\em опорні вектори} як такі, що мають один
+ненульовий множник Лагранжа, тобто або $\alpha_j>0$ або
+$\alpha_j^\ast>0$. Множина опорних векторів задається як:
+$$
+SV=\{\mathbf{x}_i: |y_i-f(\mathbf{x}_i)|\geqslant\epsilon\}.
+$$
+Оскільки з рівнянь~(\ref{Lagrange-opt-inSVR}) ми також отримуємо
+вираз для вектору параметрів:
+\begin{equation}
+\label{SVR-parameters}
+\mathbf{w}=\sum_{j=1}^N\left(\alpha_j-\alpha_j^\ast\right)\Phi(\mathbf{x}_j),
+\end{equation}
+то функція~(\ref{SVR-nonlin-func}) запишеться у вигляді так званого
+розкладу опорних векторів (неопорні або ж пасивні вектори мають
+$\alpha_j=0$ і $\alpha_j^\ast=0$, що обнуляє відповідний доданок):
+\begin{equation}
+\label{SVR-nonlin-func-SV-expansion}
+f(\mathbf{x})=\sum_{j=1}^N\left(\alpha_j-\alpha_j^\ast\right)\langle\Phi(\mathbf{x}_j),\Phi(\mathbf{x})\rangle_\mathcal{F}+b.
+\end{equation}
+Таким чином вектор параметрів $\mathbf{w}$ а з ним і апроксимуюча
+функція $f(\mathbf{x})$ може бути повністю описані як лінійні
+комбінації елементів розрідженої множини навчальної вибірки (опорних
+векторів) представлені в характеристичному просторі. Це означає, що
+$f(\cdot)\in\spanv{\langle\Phi(\mathbf{x}_j),\Phi(\lefteqn{\phantom{\mathbf{x}_j}}\cdot)\rangle_\mathcal{F}}_{j=1}^N$.
+
+\subsection{Зведення РОВ до задачі квадратичного програмування}
+
+Позначимо шуканий вектор множників Лагранжа ${\bf m}$ такий, що:
+$$
+m_j=\alpha_j,\quad m_{j+N}=\alpha_j^\ast,\quad j=1,\ldots,N.
+$$
+Введемо матрицю $\mathbf{G}$ таку, що
+$$
+\mathbf{G}=\left(\begin{array}{rr}\mathbf{D}&-\mathbf{D}\\-\mathbf{D}&\mathbf{D}\end{array}\right),
+$$
+де матриця $\mathbf{D}=\{d_{ij}\}$,
+$d_{ij}=\langle\Phi(\mathbf{x}_i),\Phi(\mathbf{x}_j)\rangle_\mathcal{F}$.
+Тоді відповідна до~(\ref{dual-max-SVR}) задача квадратичного
+програмування в матричному вигляді перепишеться:
+\begin{equation}\label{QP-SVR}
+{\bf m}_{opt}=\arg\min\frac{1}{2}{\bf m}^\top \mathbf{G}{\bf
+m}+\mathbf{c}^\top {\bf m},
+\end{equation}
+де вектор
+$\mathbf{c}=(\epsilon-y_1,\ldots,\epsilon-y_N,\epsilon+y_1,\ldots,\epsilon+y_N)^\top
+$. З обмеженнями:
+$$
+\left\{
+\begin{array}{l}
+\mathbf{a}^\top {\bf m}=0,\quad
+\mathbf{a}=(\underbrace{1,\ldots,1}_N,\underbrace{-1,\ldots,-1}_N)^\top ,\\
+0\leqslant m_j\leqslant \beta,\quad j=1,\ldots,2N.
+\end{array}\right.
+$$
+Для вектору параметрів відповідно маємо:
+$$
+\mathbf{w}=\left(\mathbf{Q},-\mathbf{Q}\right){\bf m},\quad
+\mathbf{Q}=\left(\Phi(\mathbf{x}_1),\ldots,\Phi(\mathbf{x}_N)\right).
+$$
+Задача~(\ref{QP-SVR}) є класичною задачею опуклого квадратичного
+програмування поліноміальної
+складності~\cite{Kozlov-Tarasov-Hachijan}, яку можна розв'язати
+методом Вульфа, методом активних
+обмежень~\cite{Gill-Murray-Saunders-Wright,Musicant-Feinberg},
+методом L-BFGS (limited memory Broyden-Fletcher-Goldfarb-Shanno),
+який відноситься до класу квазі-ньюто\-нівсь\-ких методів. Широкий
+спектр методів розв'язання цієї задачі приведено
+в~\cite{Goodman-Rourke}.
+
+Розклад опорних векторів~(\ref{SVR-nonlin-func-SV-expansion}) в
+матричному вигляді\footnote{В узагальненій теорії машини опорних
+векторів, де характеристичний простір це гільбертів простір з
+відтворюючими ядрами і скалярним добутком
+$\langle\cdot,\cdot\rangle_\mathcal{F}$, модель має вигляд:
+$f(\mathbf{x})=\langle\mathbf{w},\mathbf{\Phi}(\mathbf{x})\rangle_\mathcal{F}+b$.
+Надалі вважаємо, що скалярний добуток задано як:
+$\langle\mathbf{x},\mathbf{z}\rangle_\mathcal{F}=\sum_ix_i\bar{z}_i$.}:
+$$
+f(\mathbf{x})=\Phi(\mathbf{x})^\top
+\mathbf{w}+b=\Phi(\mathbf{x})^\top \left(\sum_{\mathbf{x}_i\in
+SV^+}m_i\Phi(\mathbf{x}_i)-\sum_{\mathbf{x}_j\in
+SV^-}m_{j+N}\Phi(\mathbf{x}_j)\right)+b.
+$$
+де множина опорних векторів $SV=SV^+\bigcup SV^-$,
+$\varnothing=SV^+\bigcap SV^-$:
+$$
+SV^+=\{\mathbf{x}_i: y_i-f(\mathbf{x}_i)\geqslant\epsilon\},\quad
+SV^-=\{\mathbf{x}_i: y_i-f(\mathbf{x}_i)\leqslant-\epsilon\}.
+$$
+$SV^+$ --- опорні вектори, що знаходяться вище смуги нечутливості
+або на її верхній межі, $SV^-$ --- опорні вектори, що знаходяться
+нижче смуги нечутливості або на її нижній межі. Таким чином з одного
+боку кількість параметрів моделі це розмірність характеристичного
+простору $\mathcal{F}$ плюс зміщення моделі $b$, тобто $q+1$, а з
+іншого боку за рахунок розкладу опорних векторів як представлення
+розрідженої вхідної вибірки в характеристичному просторі:
+$N_{sv}+1$, де $N_{sv}$ --- кількість опорних векторів. Як правило
+число $N_{eff}=N_{sv}+1$ набагато менше ніж $q+1$ і його можна
+інтерпретувати як кількість ефективних параметрів моделі.

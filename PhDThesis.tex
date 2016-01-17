@@ -1,0 +1,128 @@
+% ------------------------------------------------------------------------
+% Ph.D. Thesis ++ Oleg, 2008 ************
+% ------------------------------------------------------------------------
+
+\documentclass[12pt]{report}
+\usepackage[cp1251]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[ukrainian]{babel}
+\usepackage[centertags]{amsmath}
+\usepackage{amsfonts, amssymb, amsthm}
+\usepackage{../Shared.TEX/phdths}
+\usepackage{../Shared.TEX/algorithmic}
+\usepackage{color,url}
+\usepackage{graphicx}%,capt-of,listings}
+%\usepackage{epigraph}
+%\usepackage{pscyr}
+%\usepackage[unicode,colorlinks=true,linkcolor=black,citecolor=red,urlcolor=blue]{hyperref}%backref,
+\usepackage[unicode,colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}%backref,
+\usepackage{../Shared.TEX/cyrctr}
+
+\setcounter{USEPDFTEX}{1}
+
+% A4 210x297 mm
+\oddsidemargin =4.6mm % 2.54cm + 4.6mm = 30mm
+%\headheight    =0mm    %
+%\headsep       =0mm    %
+\topmargin     =-5.4mm % 2.54cm - 5.4mm = 20mm
+\textwidth     =170mm % 170mm + 30mm -> right offset = 10mm
+\textheight    =244mm % 244mm + (13head) + 20mm -> bottom offset = 20mm
+
+\tolerance = 300    % міра розрідженості строки
+\hyphenpenalty = 300% частота переносів
+\parindent = 12.5mm % абзацний відступ
+
+\fontfamily{cmr}%
+
+\hyphenation{ви-пук-лий ба-ри-цен-трич-них зам-кну-та
+роз-пов-сюд-жен-ня Воль-те-ра струк-ту-ри ос-нов-ною функ-цій
+ней-ро-не-чіт-ко-го Берн-штей-на век-то-ри міс-тить зво-рот-но-го
+об-чис-ли-ти ос-кіль-ки мож-ли-вих при-дат-нос-ті ін-тег-ру-ван-ня
+на-зи-ва-єть-ся фак-то-рів ви-роб-ниц-тва ієрар-хіч-ної
+за-леж-нос-ті до-слід-жен-ня об-лас-ті сис-тем ви-ко-рис-тан-ня
+склад-ність вхід-них неточ-ним струк-ту-рі ди-на-міч-них век-то-ру
+ем-пі-рич-ним се-ред-ня прав-до-по-діб-нос-ті се-ред-ньою
+від-сут-нос-ті мат-ри-цю ди-фе-рен-цію-ван-ня кос-ми-чес-ки-ми
+знай-шов-ши ймо-вір-нос-ті прав-до-по-діб-ність ста-тис-ти-ка
+ло-га-риф-міч-ний сис-те-ми гі-пер-па-ра-мет-рів ней-ро-не-чіт-ких
+ней-ро-не-чіт-кий ал-го-рит-му ста-тис-тич-но-го Івах-нен-ка
+зов-ніш-ньо-го стан-дарт-них об-чис-лю-валь-ні здат-ність
+ви-ко-рис-то-ву-єть-ся знач-ною век-то-рів вхід-ни-ми
+еко-но-мет-рич-но-му ха-рак-те-рис-тич-но-му ква-дра-тич-но-го
+ха-рак-те-рис-тич-но-го на-ступ-ній адап-тив-ний опи-су-єть-ся
+дос-тат-ньо мак-си-му-му ло-гіс-тич-ної hyper-pa-ra-meters мож-на
+па-ра-мет-рів байєсів-сько-го під-тверд-жен-ня ін-дук-тив-ний
+на-прик-лад ем-пі-рич-но-го ана-ло-гіч-ний тео-рія
+за-по-чат-ку-ва-ли піз-ніше прак-тич-не проб-ле-ми штуч-но-го
+не-чіт-кий оче-вид-ними ана-лі-тич-но-го об-чис-лен-ня
+прак-тич-но-му до-по-ві-да-ли-ся прик-лад-ні пер-спек-ти-ви
+роз-роб-ле-ний прос-то-рі змен-шен-ня зглад-же-ну прос-то-ру
+функ-ції вра-ху-ван-ня сис-тем-ний объек-тов ро-баст-ни-ми мат-ри-ці
+асимп-то-тич-ну ус-клад-нює стан-дарт-ни-ми до-дат-ку не-чіт-кої
+праг-ма-тич-ний ста-тис-тич-них сис-те-ма функ-ція функ-ція-ми
+струк-ту-ру прог-ноз-но-го сто-хас-тич-них}
+% ------------------------------------------------------------------------
+\begin{document}
+
+\safepdf{
+\pdfpagewidth  =210mm %
+\pdfpageheight =297mm %
+\pdfinfo { /Author(Oleg Mytnyk) } }
+
+\renewcommand{\tablename}{Таблиця}
+
+\newcounter{Fourth}
+\setcounter{Fourth}{4}
+\newcounter{Fifth}
+\setcounter{Fifth}{5}
+\newcounter{Sixth}
+\setcounter{Sixth}{6}
+\newcounter{Eleventh}
+\setcounter{Eleventh}{11}
+% ------------------------------------------------------------------------
+% first include the title
+\include{Title}
+
+\setcounter{page}{2} % begin to count pages starting from 2-nd
+
+\pagestyle{myheadings}
+
+{\sloppy
+
+% include TOC
+\renewcommand{\contentsname}{ЗМІСТ}
+\tableofcontents
+
+\renewcommand{\listfigurename}{ПЕРЕЛІК ІЛЮСТРАЦІЙ}
+\listoffigures
+
+}
+
+\include{Symbols}
+
+\fontsize{14}{24}\selectfont %cmr, cmss, cmtt
+\let\normalsize\large
+
+\include{INTRODUCTION/Introduction}
+
+\include{CHAPTER1/Chapter1}
+
+\include{CHAPTER2/Chapter2}
+
+\include{CHAPTER3/Chapter3}
+
+\include{CHAPTER4/Chapter4}
+
+\include{Conclusions}
+
+\renewcommand{\bibname}{СПИСОК ВИКОРИСТАНИХ ДЖЕРЕЛ}
+\def\BibUrl#1{\\{\footnotesize\tt \url{#1}}}
+%\bibliographystyle{gost71u}
+\bibliographystyle{../Shared.TEX/gost71u_m}
+\bibliography{../Shared.TEX/biblio}
+
+\include{APPENDIX/Appendix}
+
+% ------------------------------------------------------------------------
+\end{document}
+% ------------------------------------------------------------------------

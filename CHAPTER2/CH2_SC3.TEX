@@ -1,0 +1,241 @@
+
+\section{Швидке навчання нейронечіткої моделі у формі Бернштейна}
+
+\subsection{Швидке обернене відображення Кастельжо}
+
+Автором запропонований новий аналітичний метод обчислення
+барицентричних координат в частковій задачі наближення функції двох
+змінних поверхнею Без'є~\cite{Mytnyk-Bidyuk,Mytnyk-5conf}. Основою
+методу є наступна теорема про швидке обернене відображення
+Кастельжо:
+\begin{thm}
+\label{fast_casteljau} Нехай для довільної множини точок
+$\{\mathbf{x}\}\subset {\mathbb R^2}$ задана множина базових
+контрольних точок $\Lambda=\{\mathbf{b}_{ijk}\in {\mathbb
+R^2}:i+j+k=d\}$ порядку $d$ така, що задовольняє умовам:
+\begin{enumerate}
+\item \label{convex_cond}
+Опукла оболонка $\hull{\mathbf{b}_{ijk}}\supset\{\mathbf{x}\}$.
+\item \label{det_nonzero_cond}
+Множина внутрішніх точок
+$\inter\hull{\mathbf{b}_{ijk}}\neq\emptyset$.
+\item Виконуються наступні рівності
+\begin{equation}
+\label{bezier_conditions}
+\begin{array}{ll}
+2\mathbf{b}_{i+1j+1k}=\mathbf{b}_{ij+2k}+\mathbf{b}_{i+2jk},&
+2\mathbf{b}_{ij+1k+1}=\mathbf{b}_{ij+2k}+\mathbf{b}_{ijk+2},\\
+2\mathbf{b}_{i+1jk+1}=\mathbf{b}_{i+2jk}+\mathbf{b}_{ijk+2},&
+i+j+k+2=d.
+\end{array}
+\end{equation}
+\end{enumerate}
+Тоді обернене відображення Кастельжо має вигляд:
+\begin{equation}
+\label{fast_cast_formula} %
+\Psi(\Lambda):\mathbf{x}\mapsto\mathbf{u}(\mathbf{x}) = \left(
+\mathbf{b}_{0d0} - \mathbf{b}_{00d}, \mathbf{b}_{d00} -
+\mathbf{b}_{00d}\right)^{-1}\left(\mathbf{x} - \mathbf{b}_{00d}
+\right),
+\end{equation}
+при цьому $\mathbf{u}=(u, v)^\top \in \triangle\{u\geqslant0,
+v\geqslant0, u+v\leqslant1 \}$.
+\end{thm}
+\begin{proof}
+Випишемо три суміжні кроки ітерації $t$ $(t = 1,\ldots,d-1)$ прямого
+алгоритму Кастельжо побудови точки $\mathbf{b}_{000}^{d} =
+\mathbf{x}$ проекції поверхні Без'є по заданим барицентричним
+координатам $(u, v)^\top $:
+\begin{equation}
+\label{cast_iterations}
+\begin{array}{l}
+u\mathbf{b}_{ij+2k}^{t-1}+v\mathbf{b}_{i+1j+1k}^{t-1}+(1-u-v)
+\mathbf{b}_{ij+1k+1}^{t-1} = \mathbf{b}_{ij+1k}^{t},\\
+u\mathbf{b}_{ij+1k+1}^{t-1}+v\mathbf{b}_{i+1jk+1}^{t-1}+(1-u-v)
+\mathbf{b}_{ijk+2}^{t-1} = \mathbf{b}_{ijk+1}^{t},\\
+u\mathbf{b}_{i+1j+1k}^{t-1}+v\mathbf{b}_{i+2jk}^{t-1}+(1-u-v)
+\mathbf{b}_{i+1jk+1}^{t-1} = \mathbf{b}_{i+1jk}^{t},
+\end{array}
+\end{equation}
+та один крок наступної ітерації $t+1$, $(i+j+k=d-t-1)$
+\begin{equation}
+\label{cast_next_it}
+u\mathbf{b}_{ij+1k}^{t}+v\mathbf{b}_{i+1jk}^{t}+(1-u-v)
+\mathbf{b}_{ijk+1}^{t} = \mathbf{b}_{ijk}^{t+1}.
+\end{equation}
+Підставивши рівності~(\ref{bezier_conditions},
+\ref{cast_iterations}) в~(\ref{cast_next_it}), в результаті
+спрощень, отримаємо наступний вираз:
+$$
+u\mathbf{b}_{ij+2k}^{t-1}+v\mathbf{b}_{i+2jk}^{t-1}+(1-u-v)
+\mathbf{b}_{ijk+2}^{t-1} = \mathbf{b}_{ijk}^{t+1},
+$$
+який можна узагальнити у формі:
+\begin{equation}
+\label{fast_cast_eq_exp}%
+u\mathbf{b}_{0d0}+v\mathbf{b}_{d00}+(1-u-v) \mathbf{b}_{00d} =
+\mathbf{b}_{000}^{d} = \mathbf{x}.
+\end{equation}
+За умови існування оберненої матриці (умова \ref{det_nonzero_cond}
+теореми), маємо:
+\begin{equation}
+\label{fast_cast_eq_fin}%
+(u,v)^\top  = \left( \mathbf{b}_{0d0} - \mathbf{b}_{00d},
+\mathbf{b}_{d00} - \mathbf{b}_{00d}\right)^{-1}
+\cdot\left(\mathbf{x} - \mathbf{b}_{00d} \right).
+\end{equation}
+Умова \ref{convex_cond} теореми забезпечує $(u, v)^\top \in
+\triangle\{u\geqslant0, v\geqslant0, u+v\leqslant1 \}$.
+\end{proof}
+Графічне зображення умови~(\ref{bezier_conditions}) приведене на
+рис.~\ref{fig:casteljau2d_t}.
+
+\begin{figure}[ht]
+\safepdf{\centerline{\includegraphics[height=8cm]{CHAPTER2/EPS/casteljau2d_t.pdf}}}
+{\centerline{\psfig{figure=CHAPTER2/EPS/casteljau2d_t.eps,height=8cm}}}
+\caption{Симетричне розташування контрольних точок проекції поверхні
+Без'є на площині.} \label{fig:casteljau2d_t}
+\end{figure}
+
+\begin{cor}
+Для практичного застосування теореми~\ref{fast_casteljau}
+рівність~(\ref{fast_cast_eq_exp}) зручно переписати у вигляді
+наступної системи рівнянь:
+$$
+\left\{ \begin{array}{l}%
+ub_{0d0}^p+vb_{d00}^p+wb_{00d}^p=x^p\\
+ub_{0d0}^q+vb_{d00}^q+wb_{00d}^q=x^q\\
+u+v+w=1
+\end{array}\right.,\quad \mathbf{b}=(b^p, b^q)^\top ,
+$$
+яку найпростіше розв'язати відносно $u$ та $v$ за допомогою
+правила Крамера.
+\end{cor}
+Аналогічну теорему легко сформулювати для випадку оберненого
+відображення Кастельжо однієї змінної.
+\begin{thm}
+\label{fast_casteljau_1D} Нехай для довільної множини точок
+$\{x\}\subset {\mathbb R}$ задана множина базових контрольних точок
+$\Lambda=\{b_j\in {\mathbb R}:j=0,\ldots,d\}$ порядку $d$ така, що
+задовольняє умовам:
+\begin{enumerate}
+\item \label{convex_cond_1D} $b_0<b_1<\ldots<b_d$, $[b_0; b_d]\supset\{x\}$.%
+\item Виконуються рівності:
+\begin{equation}
+\label{bezier_conditions_1D} 2b_{j+1}=b_j+b_{j+2},\quad
+j=0,\ldots,d-2.
+\end{equation}
+\end{enumerate}
+Тоді обернене відображення Кастельжо має вигляд:
+\begin{equation}
+\label{fast_cast_formula_1D} %
+\Psi(\Lambda):x\mapsto u(x) =
+\left(x-b_0\right)/\left(b_d-b_0\right),
+\end{equation}
+при цьому $u\in [0;1]$.
+\end{thm}
+\begin{proof}
+Випишемо два суміжні кроки ітерації $t$ $(t = 1,\ldots,d-1)$
+прямого алгоритму Кастельжо побудови точки $b_0^d = x$ проекції
+кривої Без'є по заданій барицентричній координаті $u$:
+\begin{equation}
+\label{cast_iterations_1D}
+\begin{array}{l}
+b_j^t(u)=(1-u)b_j^{t-1}(u)+ ub_{j+1}^{t-1}(u), \\
+b_{j+1}^t(u)=(1-u)b_{j+1}^{t-1}(u)+
+ub_{j+2}^{t-1}(u), \quad b_j^0\equiv b_j,\\
+t=1,\ldots,d;\qquad j=0,\ldots,d-t-1;
+\end{array}
+\end{equation}
+та один крок ітерації $t+1$:
+\begin{equation}
+\label{cast_next_it_1D} %
+b_j^{t+1}(u)=(1-u)b_j^t(u)+ ub_{j+1}^t(u).
+\end{equation}
+Підставивши рівності~(\ref{bezier_conditions_1D},
+\ref{cast_iterations_1D}) в~(\ref{cast_next_it_1D}), в результаті
+спрощень, отримаємо наступний вираз:
+$$
+b_j^{t+1}(u)=(1-u)b_j^{t-1}(u)+ ub_{j+2}^{t-1}(u),
+$$
+який можна узагальнити у формі:
+$$
+b_0^d(u)=(1-u)b_0^0(u)+ ub_d^0(u),
+$$
+що і доводить~(\ref{fast_cast_formula_1D}). З
+умови~\ref{convex_cond_1D} теореми очевидно, що $u\in [0;1]$.
+\end{proof}
+
+\subsection{Аналітичний метод визначення барицентричних координат}
+
+З метою подолання таких недоліків підходу К. Харріса як неточність
+обчислення барицентричних координат, ітеративність методу
+зворотного розповсюдження помилки та невизначеність розміщення
+базових контрольних точок автором запропонований альтернативний
+метод обчислення барицентричних координат. Основою методу є
+теореми про швидке обернене відображення Кастельжо однієї змінної
+(теорема~\ref{fast_casteljau_1D}) та двох змінних
+(теорема~\ref{fast_casteljau}). Метод полягає в наступному:
+\begin{enumerate}
+\item Для кожної вхідної змінної $x$ задається множина базових
+контрольних точок $\{b_j:j=0,\ldots,d\}$ на відрізку $[x_{\min};
+x_{\max}]$ за правилом:
+$$
+b_j = x_{\min}+(x_{\max} - x_{\min})\cdot j/d. %
+$$
+\item Барицентрична координата $u$ для $x$ знаходиться за
+допомогою швидкого оберненого відображення Кастельжо однієї
+змінної, яке визначається за формулою~(\ref{fast_cast_formula_1D}).%
+\item Для кожної пари змінних $x^p$, $x^q$ задається множина
+базових контрольних точок $\{\mathbf{b}_{ijk}:i+j+k=d\}$ на площині
+$\mathcal{X}_{pq}$ за схемою:
+\begin{list}{$\bullet$}{}
+\item Введемо поняття рівня контрольної точки $(L)$ та номеру
+контрольної точки $(N)$ на заданому рівні, поставивши у
+відповідність значення $L$ та $N$ кожній з базових контрольних
+точок наступним чином:%
+
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline %
+$L/N$   & $0$ & $1$ & $2$ & $\ldots$ & $d-1$ & $d$\\
+\hline %
+$0$     & $\mathbf{b}_{d,0,0}$ & -- & -- & $\ldots$ & -- & --\\
+\hline %
+$1$     & $\mathbf{b}_{d-1,0,1}$ & $\mathbf{b}_{d-1,1,0}$ & -- & $\ldots$ & -- & --\\
+\hline %
+$2$     & $\mathbf{b}_{d-2,0,2}$ & $\mathbf{b}_{d-2,1,1}$ & $\mathbf{b}_{d-2,2,0}$ & $\ldots$ & -- & --\\
+\hline %
+$\vdots$& $\vdots$ & $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ & $\vdots$\\
+\hline %
+$d-1$   & $\mathbf{b}_{1,0,d-1}$ & $\mathbf{b}_{1,1,d-2}$ & $\mathbf{b}_{1,2,d-3}$ & $\ldots$ & $\mathbf{b}_{1,d-1,0}$ & --\\
+\hline %
+$d$     & $\mathbf{b}_{0,0,d}$ & $\mathbf{b}_{0,1,d-1}$ & $\mathbf{b}_{0,2,d-2}$ & $\ldots$ & $\mathbf{b}_{0,d-1,1}$ & $\mathbf{b}_{0,d,0}$\\
+\hline
+\end{tabular}
+\item Визначимо значення проміжних допоміжних змінних:
+$$
+\begin{array}{l}
+T_{p\max}=2x_{p\max}-x_{p\min},\quad
+T_{p\min}=2x_{p\min}-x_{p\max},\quad \\
+T_{q\max}=2.5x_{q\max}-1.5x_{q\min},\quad
+T_{q\min}=1.5x_{q\min}-0.5x_{q\max},\quad \\
+\delta T_p = (T_{p\max}-T_{p\min})/d,\quad \delta T_q =
+(T_{q\max}- T_{q\min})/d.
+\end{array}
+$$
+\item Координати $b_p$, $b_q$ кожної з контрольних точок
+визначаються за формулами:
+$$
+\begin{array}{l}
+b_p(L,N)=T_{p\min}+(d-L)\cdot0.5\cdot \delta T_p+N\cdot \delta T_p,\\
+b_q(L,N)=T_{q\min}+(d-L)\cdot\delta T_q;
+\end{array}
+$$
+легко переконатися, що таким чином задані контрольні точки
+задовольняють всім трьом умовам теореми~\ref{fast_casteljau}.
+\end{list}
+\item Барицентричні координати $u,v$ для пари $x^p, x^q$
+знаходяться за допомогою швидкого оберненого відображення
+Кастельжо двох змінних, яке визначається за
+формулою~(\ref{fast_cast_formula}).
+\end{enumerate}

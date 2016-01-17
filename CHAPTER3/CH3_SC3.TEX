@@ -1,0 +1,713 @@
+
+
+\section{Індуктивний метод побудови байєсівської моделі регресії опорних векторів у формі Бернштейна. Алгоритм ПРІАМ}
+
+\subsection{Байєсівська регресія опорних векторів}
+\label{bsvr}
+
+Для знаходження і обґрунтування вибору параметрів $\beta$ та
+$\epsilon$ регресії опорних векторів часто застосовують так званий
+байєсівський
+підхід~\cite{Tipping,Chu-Keerthi-Ong,sollich02bayesian}. Байєсівська
+регресія опорних векторів (БРОВ) припускає, що $\epsilon$-нечутлива
+функція втрат відповідає наступній моделі шумів~\cite{Law-Kwok}:
+\begin{equation}\label{Epsilon-ins-Noise-Model}
+P(\delta_i|f,\mathcal{M})=\frac{\beta}{2(1+\epsilon
+\beta)}\exp\left(-\beta|\delta_i|_\epsilon\right).
+\end{equation}
+Дисперсія шуму визначається гіперпараметром $\beta$. Таким чином
+функція правдоподібності має вигляд:
+$$
+P(\mathcal{D}|f,\mathcal{M})=\left(\frac{\beta}{2(1+\epsilon\beta)}\right)^N\cdot\exp\left(-\beta\sum_{i=1}^N|\delta_i|_\epsilon\right).
+$$
+Апріорний розподіл вектору параметрів визначимо як багатовимірний
+гаусівський розподіл з нульовим середнім і одиничною дисперсією:
+$$
+P(\mathbf{w}|\mathcal{M})=\mathcal{N}(\mathbf{w}|\mathbf{0},\mathbf{I})
+=\sqrt{\left(\frac{1}{2\pi}\right)^{q}}\cdot \exp\left(-
+R_{\mathbf{w}}(\mathbf{w})\right),\quad
+R_{\mathbf{w}}(\mathbf{w})=\frac{1}{2}\mathbf{w}^\top\mathbf{w}.
+$$
+Найбільш ймовірне значення вектору параметрів $\mathbf{w}_{mp}$ і
+зміщення $b_{mp}$, які визначають функцію $f_{mp}$, знаходяться з
+умови максимуму апостеріорного умовного розподілу ймовірності
+$P(f|\mathcal{D},\mathcal{M})$, який визначається як:
+$$
+P(f|\mathcal{D},\mathcal{M})=\frac{
+P(\mathcal{D}|f,\mathcal{M})P(\mathbf{w}|\mathcal{M})}{P(\mathcal{D}|\mathcal{M})}.
+$$
+В логарифмічному масштабі:
+\begin{multline}\label{MAPlogEstimateSVR} f_{mp}=\arg\min_\mathbf{w}\left[-\log
+P(\mathcal{D}|f,\mathcal{M})-\log
+P(\mathbf{w}|\mathcal{M})\right]=\\
+=\arg\min_\mathbf{w}-N\ln\frac{\beta}{2(1+\epsilon\beta)}
++\beta\sum_{i=1}^N|y_i-f(\mathbf{x}_i)|_\epsilon-\frac{q}{2}\ln\frac{1}{2\pi}+\frac{1}{2}\mathbf{w}^\top\mathbf{w}.
+\end{multline}
+Слід зазначити, що в цьому байєсівському висновку значення
+гіперпараметрів $\beta$ і $\epsilon$ (ширини смуги нечутливості)
+вважаються рівноймовірними. Очевидно, що така задача зводиться знову
+ж таки до ~(\ref{SVR-nonlin-min}-\ref{SVR-nonlin-subj}). Таким чином
+регуляризований ризик складає:
+$$
+R_{reg}(\mathbf{w})=\beta NR_{emp}(\mathbf{w})+
+R_{\mathbf{w}}(\mathbf{w})
+=\beta\sum_{i=1}^N|y_i-f(\mathbf{x}_i)|_\epsilon+\frac{1}{2}\mathbf{w}^\top\mathbf{w}.
+$$
+Для знаходження оптимальних значень гіперпараметрів $\beta$,
+$\epsilon$ можна застосовувати ітеративну процедуру Маккея описану
+в~\ref{sec-Baes-Approach-To-Regularization} Відповідно, після
+знаходження $\mathbf{w}_{mp}$ і $b_{mp}$, мінімізується зворотній
+логарифм підтвердження гіперпараметрів:
+\begin{equation}\label{Log-Evidence-SVR}
+-\ln
+P(\mathcal{D}|\mathcal{M})\approx-N\ln\frac{\beta}{2(1+\epsilon\beta)}
++\frac{1}{2}\ln\det\mathbf{H}_{mp}+R_{reg}(\mathbf{w}_{mp}),
+\end{equation}
+де $\mathbf{H}_{mp}$ --- гесcіан регуляризованого ризику $R_{reg}$ в
+точці $\mathbf{w}_{mp}$. Оскільки в матричному вигляді представлення
+$$
+f(\mathbf{x})=\Phi(\mathbf{x})^\top\mathbf{w}+b,
+$$
+для вибірки об'ємом $N$ легко перетворюється на лінійну в параметрах
+модель $\mathbf{f}=\mathbf{A}\mathbf{w}+b\mathbf{I}_N$, де
+$\mathbf{A}=\left(\mathbf{\Phi}(\mathbf{x}_1),\ldots,\mathbf{\Phi}(\mathbf{x}_N)\right)^\top$
+то матриця Гессе регуляризованого ризику по відношенню до вектора
+параметрів $\mathbf{w}$ визначається як
+$$
+\mathbf{H}=\nabla^2_\mathbf{w}R_{reg}(\mathbf{w})=\mathbf{I}_q,
+$$
+в усіх точках крім множини критичних (маргінальних) точок:
+$$
+CP=\{\mathbf{w}\in\mathcal{F}:\exists
+i:|y_i-f(\mathbf{x}_i)|=\epsilon\}.
+$$
+Іншими словами, маючи найбільш ймовірний вектор параметрів
+$\mathbf{w}_{mp}$, всі точки, які лежать на верхній та нижній межах
+$\epsilon$-смуги є критичними для обчислення гессіану. Це слідує з
+того, що
+$\nabla^2_\mathbf{w}R_{emp}(\mathbf{w}_{mp})\equiv\mathbf{0}$ всюди
+крім точок, що задовольняють $|y_i-f(\mathbf{x}_i)|=\epsilon$, в цих
+точках функція ризику недиференційовна. Для того, щоб уникнути цієї
+проблеми в~\cite{Law-Kwok} запропоновано наблизити
+$\epsilon$-нечутливу функцію втрат наступною гладкою функцією:
+$$
+\mathcal{C}_\eta(u)=\zeta_\eta(u-\epsilon)+\zeta_\eta(-u-\epsilon),
+$$
+де $\zeta_\eta(u)=\frac{1}{\eta}\log(1+\exp(\eta u))$, $\eta>0$.
+В~\cite{Chu-Keerthi-Ong} вводиться м'яка функція втрат вигляду:
+$$
+\mathcal{C}_\mu(u)=\left\{\begin{array}{cl}%
+-u-\epsilon, & \mbox{якщо}\quad u\in(-\infty;-(1+\mu)\epsilon)\\
+\frac{(u+(1-\mu)\epsilon)^2}{4\mu\epsilon}, & \mbox{якщо}\quad
+u\in[-(1+\mu)\epsilon; -(1-\mu)\epsilon]\\
+0, & \mbox{якщо}\quad u\in(-(1-\mu)\epsilon; (1-\mu)\epsilon)\\
+\frac{(u-(1-\mu)\epsilon)^2}{4\mu\epsilon}, & \mbox{якщо}\quad
+u\in[(1-\mu)\epsilon; (1+\mu)\epsilon]\\
+u-\epsilon, & \mbox{якщо}\quad
+u\in((1+\mu)\epsilon;+\infty)\end{array}\right.,
+$$
+де параметр $\mu\in(0;1]$.  При $\mu\rightarrow0$ м'яка функція
+втрат збігається до $\epsilon$-нечутливої функції. Але такі підходи
+призводять до складних інтегралів, які не обчислюються в
+аналітичному вигляді, і призводять до порушення робастності моделей
+РОВ.
+
+\subsection{Критерій байєсівського підтвердження адекватності моделі}
+\label{Strict-BSVR-Evidence-subsection}
+
+З метою спрощення аналітичних обчислень і забезпечення робастності
+моделей РОВ автором запропоновано застосувати локально згладжену в
+нескінченно малому околі критичних точок функцію
+втрат~\cite{Mytnyk-Kravchuk-conf-2006,Mytnyk-IAI-conf-2006}.
+\begin{lem}\label{Eps-subst-theorem}
+Для як завгодно малих околів
+$W_\eta(-\epsilon)=(-\epsilon-\eta;-\epsilon+\eta)$,
+$W_\eta(\epsilon)=(\epsilon-\eta;\epsilon+\eta)$ точок $-\epsilon$,
+$\epsilon$ існує така $C^2$ гладка функція $\mathcal{S}_\epsilon$,
+яка рівна $\epsilon$-нечутливій функції втрат Вапника
+$\mathcal{C}_\epsilon$ за межами цих околів.
+\end{lem}
+\begin{proof}
+Достатньо розглянути тільки невід'ємну дійсну піввісь (оскільки
+функція втрат симетрична). Визначимо всюди гладку першу похідну
+$\mathcal{S}'_\epsilon(u)$, у вигляді:
+\begin{equation}\label{first-deriv-func}
+\mathcal{S}'_\epsilon(u)=\left\{
+\begin{array}{ll}
+0,& u\in [0;\epsilon-\eta]\\
+l(u),& u\in (\epsilon-\eta;\epsilon+\eta)\\
+1,& u\in [\epsilon+\eta;\infty)\\
+\end{array}\right.,
+\end{equation}
+де $l(u)$ --- деяка $C^1$ гладка функція в околі $W_\eta(\epsilon)$,
+тобто на інтервалі $(\epsilon-\eta;\epsilon+\eta)$, яка задовольняє
+умовам:
+$$
+\int_{\epsilon-\eta}^{\epsilon+\eta} l(u)du=\eta,\quad
+\lim_{u\rightarrow\epsilon-\eta}l(u)=0,\quad
+\lim_{u\rightarrow\epsilon+\eta}l(u)=1,\quad
+l_+'(\epsilon-\eta)=l_-'(\epsilon+\eta)=0,
+$$
+де $l_+'$, $l_-'$ --- похідні справа та зліва відповідно. Очевидно,
+що таким чином побудована перша похідна $\mathcal{S}'_\epsilon(u)$
+забезпечує $C^2$ гладку функцію втрат $\mathcal{S}_\epsilon$, яка
+рівна $\mathcal{C}_\epsilon$ за межами околу $W_\eta(\epsilon)$ на
+додатній півосі. Тож для доведення посилання теореми знайдемо
+функцію $l(u)$ в класі логістичних функцій, тобто функцій вигляду:
+\begin{equation}\label{logistic-func}
+l(\pi(u))=\frac{e^{\pi(u)}}{1+e^{\pi(u)}}.
+\end{equation}
+Очевидно, що для такого класу функцій виконуються умови:
+$$
+\lim_{\pi\rightarrow-\infty}l(\pi)=0, \quad
+\lim_{\pi\rightarrow+\infty}l(\pi)=1.
+$$
+Застосуємо дробово-лінійне перетворення вигляду
+$$
+\pi(u)=\frac{u-\epsilon}{\eta^2-(u-\epsilon)^2}
+$$
+для того, щоб конформно відобразити інтервал
+$(\epsilon-\eta;\epsilon+\eta)$ на дійсну вісь $(-\infty;+\infty)$.
+Легко переконатися, що відображення $\pi(u)$ переводить точки
+$\epsilon-\eta$, $\epsilon$, $\epsilon+\eta$ відповідно в точки
+$-\infty$, $0$, $+\infty$. Це дає змогу записати логістичну
+функцію~(\ref{logistic-func}) від змінної $u$ у вигляді:
+\begin{equation}\label{logistic-func-u}
+l(\pi(u))=\frac{e^{\pi(u)}}{1+e^{\pi(u)}}=\frac{1}{1+e^{-\pi(u)}}
+=\left(1+\exp\left(\frac{u-\epsilon}{(u-\epsilon)^2-\eta^2}\right)\right)^{-1}.
+\end{equation}
+Зображення першої похідної $S'_\epsilon(u)$ з логістичною
+функцією~(\ref{logistic-func-u}) в $\eta$-околі точки $\epsilon$
+приведено на рис.~\ref{fig:first-deriv-eps}.
+\begin{figure}[ht]
+\safepdf{\centerline{\includegraphics[height=8cm]{CHAPTER3/EPS/EpsDeriv.pdf}}}
+{\centerline{\psfig{figure=CHAPTER3/EPS/EpsDeriv.eps,height=8cm}}}
+\caption{Графік першої похідної для $\epsilon=0.2$, $\eta=0.05$.}
+\label{fig:first-deriv-eps}
+\end{figure}
+В силу антисиметричності цієї функції відносно точки $(\epsilon;
+0.5)$, оцінивши площу під графіком в $\eta$-околі, легко бачити,
+що
+$$
+\int_{\epsilon-\eta}^{\epsilon+\eta}
+l(u)du=\int_\epsilon^{\epsilon+\eta} 1\cdot du=\eta.
+$$
+Залишилось перевірити значення похідних на кінцях $\eta$-околу.
+Похідна логістичної функції:
+$$
+l'(u)=\frac{e^{-\pi(u)}}{(1+e^{-\pi(u)})^2}\cdot\pi_u'(u),\quad
+\pi_u'(u)=\frac{\eta^2+(u-\epsilon)^2}{(\eta^2-(u-\epsilon)^2)^2}.
+$$
+Значення похідних на кінцях відповідно становлять:
+%$$
+%l_+'(\epsilon-\eta)=\frac{e^{+\infty}}{(1+e^{+\infty})^2}\cdot2\eta^2(+\infty)^2
+%=\frac{(+\infty)^2}{e^{+\infty}}=0.
+%$$
+%$$
+%l_-'(\epsilon+\eta)=\frac{e^{-\infty}}{(1+e^{-\infty})^2}\cdot2\eta^2(+\infty)^2
+%=e^{-\infty}(+\infty)^2=0.
+%$$
+$$
+l_+'(\epsilon-\eta)=\lim_{u\downarrow\epsilon-\eta}l'(u)=0,\quad
+l_-'(\epsilon+\eta)=\lim_{u\uparrow\epsilon+\eta}l'(u)=0.
+$$
+Таким чином, якщо вибрати першу похідну $S'_\epsilon(u)$ з
+логістичною функцією $l(u)$ вигляду~(\ref{logistic-func-u}), тоді
+забезпечується існування такої функції втрат
+$\mathcal{S}_\epsilon(u)$, яка співпадає з $\mathcal{C}_\epsilon(u)$
+поза околом $W_\eta$ і має вигляд:
+$$
+\mathcal{S}_\epsilon(u)=\int_{-\infty}^uS'_\epsilon(t)dt.
+$$
+\end{proof}
+
+Оскільки друга похідна функції втрат $\mathcal{S}''_\epsilon$ в
+точці $\epsilon$ рівна:
+$$
+\mathcal{S}''_\epsilon(\epsilon)=
+\frac{e^0}{(1+e^0)^2}\cdot\frac{\eta^2}{\eta^4}=\frac{1}{4\eta^2},
+$$
+то для достатньо малих значень $\eta$ (відповідні $\eta$-околи
+покривають тільки маргінальні елементи вибірки) гессіан для локально
+згладженої функції втрат рівний:
+$$
+\mathbf{H}=\mathbf{I}_q+\frac{\beta}{4\eta^2}\mathbf{I}_M,
+$$
+де $\mathbf{I}_M=\diag\{\mathbf{d}\}$ --- діагональна матриця з
+$d_{ii}=1$ для $m$ маргінальних елементів вибірки
+$|y_i-f(\mathbf{x}_i)|=\epsilon$ і $d_{ii}=0$ для решти елементів.
+Тоді~(\ref{Log-Evidence-SVR}) приймає вигляд:
+$$
+-\ln
+P(\mathcal{D}|\mathcal{M})\approx-N\ln\frac{\beta}{2(1+\epsilon\beta)}
++ \frac{m}{2}\ln\left(1+\frac{\beta}{4\eta^2}\right)
++R_{reg}(\mathbf{w}_{mp}).
+$$
+Покажемо яким чином можна ще більше спростити зворотній логарифм
+підтвердження гіперпараметрів.
+
+\begin{thm}\label{Ignore-limit-points}
+Для будь-якої $\epsilon$-нечутливої смуги регресії опорних векторів
+існує як завгодно мале відхилення $\Delta\epsilon$ таке, що для
+$\epsilon_1$-нечутливої смуги ($\epsilon_1=\epsilon-\Delta\epsilon$)
+гессіан регуляризованого ризику $\mathbf{H}_{mp}\equiv\mathbf{I}_q$
+в усіх точках і при цьому вектори зберігають властивість опорності.
+\end{thm}
+\begin{proof}
+Позначимо множину похибок наближення регресії опорних векторів як
+$\{\delta_i, \delta_i=|y_i-f(\mathbf{x}_i)|\}_{i=1}^N$. Якщо
+$\nexists i:\delta_i=\epsilon$, тоді покладемо $\Delta\epsilon=0$.
+Якщо існує хоча б одне $i: \delta_i=\epsilon$, тоді виберемо таку
+підмножину похибок $\{\delta_j\}_j$, для яких $\delta_j<\epsilon$.
+Очевидно, що існує $\delta_{max}=\max\{\delta_j:
+\delta_j<\epsilon\}<\epsilon$. Виберемо як завгодно мале значення
+$\Delta\epsilon$ з інтервалу $(0;\epsilon-\delta_{max})$.
+
+Таким чином вибране відхилення $\Delta\epsilon$ забезпечує те, що не
+існує точок вибірки, які лежать на верхній чи нижній межах
+$\epsilon_1$-нечутливої смуги (рис.~\ref{fig:theorem2}).
+\begin{figure}[ht]
+\safepdf{\centerline{\includegraphics[height=8cm]{CHAPTER3/EPS/Theorem2.pdf}}}
+{\centerline{\psfig{figure=CHAPTER3/EPS/Theorem2.eps,height=8cm}}}
+\caption{Вибір відхилення $\Delta\epsilon$ для заданої вибірки.
+Опорні вектори зображені зафарбованими квадратами.}
+\label{fig:theorem2}
+\end{figure}
+Оскільки вектори які лежать на верхній чи нижній межах
+$\epsilon$-нечутливої смуги є опорними, то при звуженні смуги на
+$\Delta\epsilon$ вони не втрачають властивість опорності, і жодний
+неопорний вектор не стає опорним. Очевидно, що
+$$
+\min_i\left|\delta_i-\epsilon_1\right|=h>0.
+$$
+Виберемо $\eta$ таке, що $0<\eta<h$, тоді за
+лемою~\ref{Eps-subst-theorem} існує функція
+$\mathcal{S}_{\epsilon_1}$, яка співпадає з $\epsilon_1$-нечутливою
+функцією втрат $\mathcal{C}_{\epsilon_1}$ за межами околів
+$W_\eta(\epsilon_1)$. Оскільки не існує точок вибірки, які лежать в
+околах $W_\eta(\epsilon_1)$, а за межами цих околів друга похідна
+функції втрат дорівнює нулю, то можна зробити висновок про те, що
+$\nabla^2_\mathbf{w}R_{emp}(\mathbf{w})\equiv\mathbf{0}$. Це
+фактично доводить, що гессіан регуляризованого ризику можна вважати
+в усіх точках рівним
+$$
+\mathbf{H}=\mathbf{I}_q,
+$$
+оскільки для обчислювальних методів можна знехтувати як завгодно
+малим зменшенням ширини смуги нечутливості (достатньо вибрати
+величину $\Delta\epsilon$ менше ніж точність операцій технічного
+обчислювального засобу, тобто менше ніж дозволяє розрядність
+мантиси).
+\end{proof}
+
+Враховуючи вище доведену теорему,
+наближення~(\ref{Log-Evidence-SVR}) можна переписати у вигляді:
+\begin{equation}\label{BECdef}
+-\ln
+P(\mathcal{D}|\mathcal{M})\approx{\mbox{КБП}}(\mathcal{M},\epsilon,\beta)=
+-N\ln\frac{\beta}{2(1+\epsilon\beta)}+R_{reg}(\mathbf{w}_{mp}),
+\end{equation}
+Цей критерій будемо називати {\em критерієм байєсівського
+підтвердження} (КБП) для РОВ.
+
+Взявши похідну в~(\ref{BECdef}) відносно гіперпараметру $\beta$ і
+прирівнявши її нулю, отримаємо:
+$$
+-\frac{N}{\beta}+\frac{N\epsilon}{1+\epsilon\beta}+NR_{emp}(\mathbf{w}_{mp})=0.
+$$
+Екстремальність за гіперпараметром $\beta$ дає першу умову
+оптимальності побудованої регресії опорних векторів:
+\begin{equation}\label{Bayes-opt-evidence1}
+-\frac{1}{\beta(1+\epsilon\beta)}+R_{emp}(\mathbf{w}_{mp})=0.
+\end{equation}
+Другу умову оптимальності можна отримати з умови
+екстремальності~(\ref{BECdef}) за гіперпараметром $\epsilon$.
+\begin{sta}\label{Empiric-risk-derivative}
+Швидкість зменшення емпіричного ризику при збільшенні ширини смуги
+нечутливості прямо пропорційна кількості опорних векторів.
+\end{sta}
+\begin{proof}
+Спочатку знайдемо похідну функції втрат Вапника по $\epsilon$:
+$$
+\left(|\delta|_\epsilon\right)'_\epsilon=\lim_{\Delta\epsilon\rightarrow0}
+\frac{|\delta|_{\epsilon+\Delta\epsilon}-|\delta|_\epsilon}{\Delta\epsilon}=
+-\frac{|\delta|_\epsilon}{|\delta|-\epsilon}.
+$$
+Тоді
+$$
+\left(R_{emp}\right)'_\epsilon=\left(\frac{1}{N}\sum_{j=1}^N|\delta_j|_\epsilon\right)'_\epsilon=
+-\frac{N_{sv}}{N}.
+$$
+де $N_{sv}$ --- кількість опорних векторів.
+\end{proof}
+Враховуючи результат леми~\ref{Empiric-risk-derivative}, взявши
+похідну в~(\ref{BECdef}) відносно гіперпараметру $\epsilon$ і
+прирівнявши її нулю, отримаємо другу умову оптимальності:
+\begin{equation}\label{Bayes-opt-evidence2}
+\frac{N\beta}{1+\epsilon\beta}-\beta N_{sv}=0\Leftrightarrow
+N_{sv}=\frac{N}{1+\epsilon\beta}.
+\end{equation}
+Як буде показано далі, ця умова має змістовну інтерпретацію, а саме
+--- вона відображає апріорну ймовірність опорності вектору.
+
+Умови~(\ref{Bayes-opt-evidence1}-\ref{Bayes-opt-evidence2})
+оптимальності РОВ приводять в загальному випадку до системи
+нелінійних алгебраїчних рівнянь:
+\begin{equation}\label{System-nonlin-equation-BSVR}
+\left\{
+\begin{array}{ll}
+-1+\beta(1+\epsilon\beta)\cdot R_{emp}(\epsilon,\beta) & =0,\\
+-N+(1+\epsilon\beta)\cdot N_{sv}(\epsilon,\beta) & =0.
+\end{array}
+\right.
+\end{equation}
+Цю систему можна розв'язувати методами простої ітерації, Ньютона,
+Ле\-вен\-бер\-га-Магвердта\footnote{\url{http://en.wikipedia.org/wiki/Levenberg-Marquardt_algorithm}}.
+В даному дисертаційному дослідженні пропонується використовувати
+рефлексивний метод Ньютона~\cite{Coleman-Li}. Також для знаходження
+оптимальних значень гіперпараметрів можна застосовувати методи
+нелінійної оптимізації безпосередньо до~(\ref{BECdef}). Ефективність
+того чи іншого підходу залежить від його реалізації. Загальна схема
+алгоритму оптимізації за гіперпараметрами має наступний вигляд.
+\begin{algorithmic}
+   \STATE {\bfseries Задані:} дані спостережень $\mathcal{D}$, модель $\mathcal{M}$, початкові значення
+          гіперпараметрів $\epsilon^{(0)}$, $\beta^{(0)}$, мінімізатор $\mathfrak{S}$.%
+   \STATE {\bfseries Результат:} оптимальні значення гіперпараметрів.%
+   \STATE {\bfseries Початок}
+   \STATE ітератор $t\longleftarrow$0;%
+   \REPEAT
+   \STATE обчислення МАП оцінки~(\ref{MAPlogEstimateSVR}) з гіперпараметрами $\epsilon^{(t)}$, $\beta^{(t)}$;%
+   \STATE обчислення ${\mbox{КБП}}(\mathcal{M},\epsilon^{(t)},\beta^{(t)})$ за формулою~(\ref{BECdef});%
+   \STATE обчислення нових значень $\epsilon^{(t+1)}$, $\beta^{(t+1)}$, використовуючи $\mathfrak{S}$ метод;%
+   \STATE $t\longleftarrow t+1$;%
+   \UNTIL {не досягли необхідного рівня збіжності для методу $\mathfrak{S}$.}
+\end{algorithmic}
+
+\subsubsection{Інтуїтивний метод адаптації параметрів регресії опорних векторів}
+
+Оскільки~(\ref{Bayes-opt-evidence1}) є фактично умовою оптимальності
+регресії опорних векторів за гіперпараметрами $\epsilon$ та $\beta$,
+то процес адаптації зводиться до спроб задовольнити цю умову.
+
+Якщо припустити, що модель незміщена і справжній шум дійсно
+описується~(\ref{Epsilon-ins-Noise-Model}), тоді ймовірність того,
+що конкретному $\mathbf{x}_i$ буде відповідати значення виходу
+$y_i$ за межами $\epsilon$-смуги нечутливості, тобто вектор
+$\mathbf{x}_i$ є опорним, рівна:
+$$
+p_{sv}=\int_{\mathbb{R}\backslash(-\epsilon,\epsilon)}
+P(y_i|\mathbf{x}_i,f,\epsilon,\beta,\mathcal{M})d\delta=
+1-\int_{-\epsilon}^\epsilon\frac{\beta}{2(1+\epsilon\beta)}\exp(-\beta\cdot0)d\delta=\frac{1}{1+\epsilon\beta}.
+$$
+де відхилення $\delta=y_i-f(\mathbf{x}_i)$.
+
+Припустимо, що на основі наперед заданих значень гіперпараметрів
+$\epsilon_0$, $\beta_0$ побудована регресія з $N_{sv}$ опорними
+векторами і емпіричним ризиком $R_{emp}$. Очевидно, що апріорна
+ймовірність опорності вектору (очікувана ймовірність) рівна:
+$$
+P(H)=\frac{1}{1+\epsilon_0\beta_0}.
+$$
+При цьому апостеріорна ймовірність (реально отримана) рівна:
+$$
+P(H|\epsilon=\epsilon_0, \beta=\beta_0)=\frac{N_{sv}}{N}.
+$$
+Інтуїтивно зрозуміло що, якщо апостеріорна ймовірність більша
+(занадто багато опорних векторів), то ширина смуги нечутливості
+$\epsilon$ менша за потрібну, і тому її вигідно збільшити. Це
+правило можна записати як:
+$$
+\epsilon_1=\epsilon_0\cdot\frac{P(H|\epsilon=\epsilon_0,
+\beta=\beta_0)}{P(H)}=\epsilon_0\cdot\frac{N_{sv}}{N}(1+\epsilon_0\beta_0),
+$$
+де $\epsilon_1$ --- нове рекомендоване значення. Це означає що, якщо
+ми отримали вдвічі більше опорних векторів ніж розраховували, то
+необхідно збільшити ширину смуги нечутливості також вдвічі. Нове
+значення $\beta_1$ можна отримати з~(\ref{Bayes-opt-evidence1}) за
+правилом:
+$$
+\beta_1=\frac{1}{1+\epsilon_0\beta_0}\cdot\frac{1}{R_{emp}}.
+$$
+Практичні дослідження підтвердили ефективність такого інтуїтивного
+висновку, хоча строго він не доведений.
+
+\subsubsection{Аналіз критерію байєсівського підтвердження}
+
+При виведенні КБП був використаний метод Лапласа. Зміст цього методу
+полягає у наближенні апостеріорного розподілу функцій
+$P(f|\mathcal{D},\mathcal{M})$ нормальним розподілом, суміщуючи моди
+цих розподілів. В цьому випадку можна аналітично обчислити інтеграл
+підтвердження. Проте, як показано в роботі~\cite{Kuss-Rasmussen},
+метод Лапласа систематично переоцінює підтвердження і не може бути
+використаний для точного його підрахунку. Для точного підрахунку
+застосовують метод розповсюдження сподівань~\cite{Minka-PhD}, який
+наближає апостеріорний розподіл функцій нормальним розподілом,
+суміщуючи перші два моменти цих розподілів. Також для отримання
+асимптотично точної оцінки інтегралу застосовують метод
+Монте-Карло~\cite{Neal-97}. Тож основною перевагою методу Лапласа в
+порівнянні з вище згаданими методами є його швидкість.
+
+Більш глибокий аналіз методу Лапласа показує, що цей метод
+систематично переоцінює підтвердження {\em для всіх моделей\/} і
+може бути використаний для швидкого порівняння рівня адекватності
+моделей~\cite{Mytnyk-DSMSI-2007}. На рис.~\ref{fig:mcmc_bec}
+наведені оцінки залежності $-\ln P(\mathcal{D}|\mathcal{M})$ від
+різних моделей (модель з гіперпараметром), які отримані наближеннями
+Монте-Карло та Лапласа.
+\begin{figure}[ht]
+\safepdf{\centerline{\includegraphics[height=7cm]{CHAPTER3/EPS/mcmcbec.pdf}}}
+{\centerline{\psfig{figure=CHAPTER3/EPS/mcmcbec.eps,height=7cm}}}
+\caption{Порівняння оцінок підтвердження методом Монте-Карло (МК) та
+методом Лапласа (КБП).} \label{fig:mcmc_bec}
+\end{figure}
+Таким чином КБП можна використовувати як оцінку адекватності моделей
+при їх порівнянні. Наприклад, для порівняння адекватності моделей
+$\mathcal{M}_1$ та $\mathcal{M}_2$ (близьких в просторі
+$\mathcal{H}$) достатньо обчислити КБП і вибрати модель з меншим
+значенням КБП, і відповідно з більшим значенням (зміщеної) оцінки
+підтвердження. Це дає можливість застосовувати методи нелінійної
+оптимізації для пошуку оптимальної моделі $\mathcal{M}^{\mbox{o}}$.
+
+Для загальності опишемо коротко наближення підтвердження за методом
+Монте-Карло. Як добре відомо має місце наступна оцінка:
+$$
+\int h(\phi)P(\phi)d\phi\approx\frac{1}{T}\sum_{i=1}^Th(\phi_i),
+$$
+де значення $\phi_i$ згенеровані відповідно до розподілу $P(\phi)$.
+Тож для оцінки підтвердження можна використовувати наближення:
+$$
+P(\mathcal{D}|\mathcal{M})=\int_\mathcal{F}
+P(\mathcal{D}|\mathbf{w},\mathcal{M})P(\mathbf{w}|\mathcal{M})d\mathbf{w}\approx
+\frac{1}{T}\sum_{i=1}^TP(\mathcal{D}|\mathbf{w}_i,\mathcal{M}),
+$$
+де $\mathbf{w}_i$ згенеровані відповідно до апріорного розподілу
+$P(\mathbf{w}|\mathcal{M})$, який в нашому випадку
+$\mathcal{N}(\mathbf{w}|\mathbf{0},\mathbf{I})$. Звідси отримаємо
+оцінку зворотного логарифму підтвердження у вигляді:
+$$
+-\ln
+P(\mathcal{D}|\mathcal{M})=-N\ln\frac{\beta}{2(1+\epsilon\beta)}-
+\ln\left(\frac{1}{T}\sum_{i=1}^T\exp(-\beta
+NR_{emp}(\mathbf{w}_i))\right).
+$$
+Достатньо точна оцінка може бути отримана тільки при відносно
+великих значеннях $T=10^5$. Для зменшення кількості вибіркових
+значень і побудови ефективної траєкторії дискретизації застосовують
+зокрема модель Гіббса методу Монте-Карло для марковських ланцюгів.
+Застосування такого підходу можна знайти зокрема в
+роботі~\cite{BidyukLitvinenko05}.
+
+\subsection{Схема алгоритму ПРІАМ. Характеристичний простір поліноміальних функцій Без'є-Бернштейна.}
+
+Для забезпечення структурованості моделей в якості характеристичного
+простору доцільно застосувати простір поліноміальних функцій
+Без'є-Бернштейна. Введено поняття конфігурації характеристичного
+простору поліноміальних функцій Без'є-Бернштейна у вигляді
+верхньотрикутної матриці $\mathbf{C}$ розмірності $n\times n$, де
+кожен елемент $c_{i\geqslant j}\geqslant0$ відображає ступінь впливу
+фактору $x_{i=j}$ або пари факторів $x_i$, $x_j$ на вихідну змінну
+$y$ і визначає порядок базисних поліномів Бернштейна для відповідної
+поліноміальної функції. Характеристичне відображення у цьому випадку
+матиме вигляд:
+$\mathbf{\Phi}(\mathbf{C}):\mathbf{x}\mapsto(\ldots,\phi_j^{c_k}(x^k),\ldots,\phi_{irt}^{c_{pq}}(x^p,
+x^q),\ldots)^\top$. Це відображення індукує відповідний простір
+моделей у формі Бернштейна, який узагальнює
+розклад~(\ref{gabor_expan}):
+\begin{equation}\label{nfms}
+\mathcal{M}(\mathbf{w},b,\mathbf{x})=\mathcal{H}(\mathbf{C},\mathbf{w},b,\mathbf{x})
+=b+\sum_{k=1}^nB^{c_k}_k(x^k)+\sum_{p=1}^{n-1}\sum_{q=p+1}^nB^{c_{pq}}_{pq}\left(x^p,
+x^q\right),
+\end{equation}
+Для загальності міркувань покладемо $B^0(\cdot)\equiv0$, що фактично
+означає відсутність впливу відповідного фактору або пари факторів на
+вихід.
+
+Основним результатом третього розділу є індуктивний метод побудови
+байєсівської моделі РОВ у формі Бернштейна, який визначає порядок
+перебору моделей в просторі $\mathcal{H}$. Схема алгоритму
+ПРІАМ\footnote{ПРІАМ
+--- Поліноміальної Регресії опорних векторів Індуктивний Алгоритм Моделювання. Шаблон індуктивності
+взято з алгоритму ASMOD~\cite{Kavli,Kavli-Weyer}. ASMOD --- це
+адаптивний сплайновий алгоритм моделювання, який має за основу
+принцип мінімізації структурного ризику.}, який реалізує даний метод
+має вигляд~\cite{Mytnyk-KISA-07,Mytnyk-KISA-07-ENG}:
+
+\subsubsection{Поліноміальної Регресії опорних векторів Індуктивний Алгоритм Моделювання}
+
+\begin{algorithmic}
+   \STATE {\bfseries Задані:} дані спостережень $\mathcal{D}$, рівень збіжності $\mu>0$,
+ початкова модель $\mathcal{M}^{(0)}=\mathcal{H}\left(\mathbf{C}^{(0)}\right)$, яка відповідає апріорним
+ сподіванням.
+   \STATE {\bfseries Результат:} субоптимальна модель
+   $\mathcal{M}_{\mbox{opt}}$.
+   \STATE {\bfseries Алгоритм починає роботу з}
+   \STATE нормування вхідного та вихідного просторів;%
+   \STATE ітератор $t\longleftarrow$0;%
+   \REPEAT
+   \STATE $\mathcal{M}_{\mbox{opt}}\longleftarrow\mathcal{M}^{(t)}$;%
+   \STATE генерація множини моделей кандидатів:
+   $\left\{\mathcal{M}_{ij}^{(t+1)}=\mathcal{H}\left(\mathbf{C}^{(t+1)}_{ij}\right)\right\}_{ij}$,\\%
+   де $\mathbf{C}^{(t+1)}_{ij}=\mathbf{C}^{(t)}\pm\mathbf{1}_{ij}$,
+    $1\leqslant i\leqslant j\leqslant n$, $\mathbf{1}_{ij}$ --- нульова матриця з одиницею в
+рядку $i$ в стовпчику $j$, що відповідає мінімальній зміні конфігурації простору;\\
+   \FOR{{\bfseries кожної} моделі кандидата $\mathcal{M}_{ij}^{(t+1)}$}
+   \STATE обчислення $\mbox{КБП}\left(\mathcal{M}_{ij}^{(t+1)}\right)$, мінімізація~(\ref{BECdef})
+          за гіперпараметрами;%
+   \ENDFOR перебору моделей кандидатів;
+   \STATE вибір моделі з найменшим значенням КБП:
+   \STATE $\mathcal{M}^{(t+1)}=\arg\left(\mbox{КБП}^{(t+1)}=\min\mbox{КБП}\left(\mathcal{M}_{ij}^{(t+1)}\right)\right)$;%
+   \STATE \textsl{критерій зупинки} $\longleftarrow\mbox{КБП}^{(t+1)}+\mu>\mbox{КБП}^{(t)}$;%
+   \STATE $t\longleftarrow t+1$;
+   \UNTIL{не виконається \textsl{критерій зупинки}};%
+   \STATE {\bfseries кінець роботи алгоритму.}
+\end{algorithmic}
+
+
+Визначимо розмірність задачі навчання через розмірність простору
+входу $n$ і об'єм вибірки даних спостережень $N$. Тоді складність
+алгоритму ПРІАМ складається з витрат на перебір моделей кандидатів і
+витрат на розв'язок задачі квадратичного програмування методом
+активних обмежень і становить $\mathcal{O}(n^2N^3)$. Збіжність ПРІАМ
+забезпечується глобальною і квадратичною збіжністю рефлексивного
+методу Ньютона для мінімізації КБП за гіперпараметрами а також, як
+легко показати в силу оцінки знизу
+$\mbox{КБП}>-N\ln(\beta_{\max}/2)$ для $\beta_{\max}<\infty$,
+лінійною збіжністю пошуку субоптимальної моделі.
+
+
+\subsubsection{Збалансованість нейронечіткої моделі РОВ у формі Бернштейна}
+
+Відзначимо ще один важливий результат.
+\begin{sta}\label{zero_sum koef_svr_feature_map}
+Нехай за допомогою регресії опорних векторів отримана нейронечітка
+модель у формі Бернштейна
+$$
+f(\mathbf{x})=b+\sum_{k=1}^n\sum_{j=0}^{c_k}w_j^k\phi_j^{c_k}(x^k)+
+\sum_{p=1}^{n-1}\sum_{q=p+1}^n\sum_{i+r+t=c_{pq}}w_{irt}^{pq}\phi_{irt}^{c_{pq}}(x^p,x^q).
+$$
+Тоді сума коефіцієнтів при базисних поліномах Бернштейна
+$\phi_j^{c_k}$ і $\phi_{irt}^{c_{pq}}$ дорівнює нулю:
+$$
+\sum_{j=0}^{c_k}w_j^k=0,\quad\sum_{i+r+t=c_{pq}}w_{irt}^{pq}=0.
+$$
+\end{sta}
+\begin{proof}[Доведення твердження~\ref{zero_sum koef_svr_feature_map}]
+Коефіцієнти регресії опорних векторів відповідно
+до~(\ref{SVR-parameters}) дорівнюють
+$$
+w_j^k=\sum_{e=1}^N\left(\alpha_e-\alpha_e^\ast\right)\phi_j^{c_k}(x^k_e),\quad
+w_{irt}^{pq}=\sum_{e=1}^N\left(\alpha_e-\alpha_e^\ast\right)\phi_{irt}^{c_{pq}}(x^p_e,
+x^q_e).
+$$
+Тож сума коефіцієнтів рівна:
+$$
+\sum_{j=0}^{c_k}w_j^k=\sum_{j=0}^{c_k}\sum_{e=1}^N\left(\alpha_e-\alpha_e^\ast\right)\phi_j^{c_k}(x^k_e)
+=\sum_{e=1}^N\left(\alpha_e-\alpha_e^\ast\right)\underbrace{\sum_{j=0}^{c_k}\phi_j^{c_k}(x^k_e)}_{=1}
+=0
+$$
+і аналогічно
+$$
+\sum_{i+r+t=c_{pq}}w_{irt}^{pq}
+=\sum_{e=1}^N\left(\alpha_e-\alpha_e^\ast\right)\overbrace{\sum_{i+r+t=c_{pq}}\phi_{irt}^{c_{pq}}(x^p_e,
+x^q_e)}^{=1} =0
+$$
+в силу обмежень двоїстої задачі максимізації~(\ref{dual-max-SVR}):
+$\sum_{e=1}^N\left(\alpha_e-\alpha_e^\ast\right)=0$.
+\end{proof}
+Це означає, що модель отримана за допомогою ПРІАМ автоматично є
+збалансованою і може бути відразу ж використана для генерації
+нечітких правил за підмоделями.
+
+\subsection{Апостеріорний прогнозний розподіл. Довірчі інтервали}
+
+В підрозділі~\ref{bsvr} ми визначили апріорний розподіл вектору
+параметрів у вигляді багатовимірного нормального розподілу
+$\mathcal{N}(\mathbf{w}|\mathbf{0},\mathbf{I})$. Тим самим неявно
+був визначений апріорний розподіл моделей
+$P(f|\mathcal{M})=\mathcal{N}(\mathbf{f}|\mathbf{b},\mathbf{K})$,
+оскільки для кожного $\mathbf{w}$ з розподілу існує відповідна
+функція $f(\mathbf{x})=\mathcal{M}(\mathbf{x},\mathbf{w})$. В цьому
+випадку прийнято говорити про перехід від параметрично-просторового
+погляду на гаусові процеси до функціонально-просторового. Елементи
+матриці коваріації $\mathbf{K}$, яка побудована на вибірці вхідних
+векторів $\mathbf{X}=\{\mathbf{x}_1,\ldots,\mathbf{x}_N\}$:
+\begin{multline*}
+K_{ij}=k(\mathbf{x}_i,\mathbf{x}_j)=\cov(f(\mathbf{x}_i),f(\mathbf{x}_j))=\meanl{\left(f_i-\mean{f_i}\right)\left(f_j-\mean{f_j}\right)}=\\
+=\Phi(\mathbf{x}_i)^\top\meanl{\left(\mathbf{w}-\mean{\mathbf{w}}\right)\left(\mathbf{w}-\mean{\mathbf{w}}\right)^\top}\Phi(\mathbf{x}_j)=
+\Phi(\mathbf{x}_i)^\top\Phi(\mathbf{x}_j).
+\end{multline*}
+Апостеріорний розподіл $P(f|\mathcal{D},\mathcal{M})$ можна
+використати для обчислення апостеріорного прогнозного розподілу
+$f_\ast=f(\mathbf{x}_\ast)$ для будь-якого вектору входу
+$\mathbf{x}_\ast$. Для цього необхідно обчислити наступний інтеграл
+по апостеріорній невизначеності $f$:
+$$
+P(f_\ast|\mathcal{D},\mathcal{M},\mathbf{x}_\ast) = \int_\mathcal{M}
+P(f_\ast|f,\mathbf{X},\mathbf{x}_\ast)P(f|\mathcal{D},\mathcal{M})df.
+$$
+Оскільки в якості апріорної інформації про модель використано
+гаусівський процес, то апріорний сумісний розподіл має вигляд
+багатовимірного нормального розподілу:
+$$
+P(f,f_\ast|\mathbf{X},\mathbf{x}_\ast) =\mathcal{N}\left(
+\left[\begin{array}{l}b\\b_\ast\end{array}\right],
+\left[\begin{array}{ll}\mathbf{K}&\mathbf{k}_\ast\\\mathbf{k}^\top
+_\ast&k_{\ast\ast}\end{array}\right]\right),
+$$
+де $k_{\ast\ast}=k(\mathbf{x}_\ast,\mathbf{x}_\ast)$,
+$\mathbf{k}_\ast=(k(\mathbf{x}_1,\mathbf{x}_\ast),\ldots,k(\mathbf{x}_N,\mathbf{x}_\ast))^\top
+$. Звідси можна отримати умовний розподіл $f_\ast|f$, який виражає
+залежність $f_\ast$ від $f$ індуковану апріорним гаусівським
+процесом~\cite{Kuss:06,Chu-Keerthi-Ong}:
+$$
+P(f_\ast|f,\mathbf{X},\mathbf{x}_\ast)=\mathcal{N}(b_\ast+\mathbf{k}^\top
+_\ast\mathbf{K}^{-1}(f-b), k_{\ast\ast}-\mathbf{k}^\top
+_\ast\mathbf{K}^{-1}\mathbf{k}_\ast).
+$$
+Якщо розподіл шуму $P(\delta|f,\mathcal{M})$ має вигляд нормального
+$\mathcal{N}(\delta|0,\sigma^2_N)$, то загальна дисперсія
+апостеріорного прогнозного розподілу становить:
+$$
+\sigma^2=k_{\ast\ast}-\mathbf{k}^\top
+_\ast(\mathbf{K}+\sigma^2_N\mathbf{I})^{-1}\mathbf{k}_\ast.
+$$
+Хоча ми використовуємо розподіл шуму відмінний від нормального, цю
+формулу можна використовувати як наближення дисперсії справжнього
+апостеріорного прогнозного розподілу. На рис.~\ref{fig:bsvrdist}
+показано, що шум байєсівської регресії опорних векторів достатньо
+близький до нормального.
+
+\begin{figure}[ht]
+\safepdf{\centerline{\includegraphics[width=13cm]{CHAPTER3/EPS/bsvrdist.pdf}}}
+{\centerline{\psfig{figure=CHAPTER3/EPS/bsvrdist.eps,width=13cm}}}
+\caption{Порівняння моделі шуму БРОВ (1) з гіперпараметрами
+$\beta=15$, $\epsilon=0.06$ та моделі нормального шуму (2) з
+нульовим середнім та дисперсією $\sigma^2_N=0.0114$.}
+\label{fig:bsvrdist}
+\end{figure}
+
+Визначимо дисперсію шуму $\sigma^2_N$ відповідно до моделі
+шуму~(\ref{Epsilon-ins-Noise-Model}):
+\begin{equation}\label{bsvr-variance}
+\sigma^2_N=\int_{-\infty}^{+\infty}
+\delta^2\cdot\frac{\beta}{2(1+\epsilon
+\beta)}\exp\left(-\beta|\delta|_\epsilon\right)d\delta=
+\frac{2}{\beta^2}+\frac{\epsilon^2(\epsilon\beta+3)}{3(\epsilon\beta+1)}.
+\end{equation}
+Як показано в роботі~\cite{Gao-Gunn-Harris} для обчислення
+коваріацій $\mathbf{K}$, $\mathbf{k}_\ast$ можна використовувати не
+повну вибірку вхідних векторів $\mathbf{X}$, а тільки ту її частину,
+яка відповідає маргінальним опорним векторам:
+$$
+\mathbf{X}_M=\{\mathbf{x}_i: |y_i-f(\mathbf{x}_i)|=\epsilon,\quad
+0<|\alpha_i-\alpha_i^\ast|<\beta\}.
+$$
+Таким чином справедлива наступна оцінка дисперсії апостеріорного
+прогнозного розподілу:
+$$
+\sigma^2\approx k_{\ast\ast}-\mathbf{k}^\top
+_\ast(\mathbf{X}_M)(\mathbf{K}(\mathbf{X}_M)+\sigma^2_N\mathbf{I})^{-1}\mathbf{k}_\ast(\mathbf{X}_M).
+$$
+де $\sigma^2_N$ визначається формулою~(\ref{bsvr-variance}).
+Довірчий інтервал, який відповідає рівню довіри $95\%$, як правило
+приблизно оцінюють як $\pm2\sigma$.

@@ -1,0 +1,575 @@
+\appendix
+
+\renewcommand{\thechapter}{\Cyrctr{chapter}}
+\setcounter{chapter}{0}\setcounter{table}{0}\setcounter{figure}{0}
+
+\chapter{РЕЗУЛЬТАТИ ПОБУДОВИ ПРОГНОЗІВ ЗА ДОПОМОГОЮ
+ПРІАМ}\label{ResultDetails}
+
+\begin{table}{\bf Модель Лонглі}
+\tablecaption{Повний розв'язок оптимальної моделі Лонглі}
+\label{tbl:Solution-Longley}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+  \hline
+  № & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+  \hline
+  $\alpha$ & 11.2 & 0 & 20.4 & 0 & 0 & 0 & 0 & 0 & 0 & 48.8 & 0 \\
+  \hline
+  $\alpha^\ast$ & 0 & 0 & 0 & 38.5 & 0 & 12 & 0 & 0 & 0 & 0 & 29.8 \\
+  \hline
+  $b$ & 0.56\\
+  \cline{1-2}
+\end{tabular}
+\vskip 0.2in
+%\vskip -0.2in
+%\end{table}
+%\begin{table}
+%\tablecaption{Процес байєсівської індукції оптимальної моделі
+%Лонглі} \label{tbl:Bayes-Longley}
+\begin{tabular}{cccccccrr}
+\hline
+№ &  КБП   & $\tilde{\epsilon}$ & $\beta$ & $N_{sv}$ & $\tilde{R}_{emp}$ & $\tilde{R}_{reg}$ & СКПн & САПн\\
+\hline
+1 & -19.70 & 0.030 & 20.0 & 5 & 0.0009 & 0.4616 & 0.0169 & 0.1191\\
+2 & -22.54 & 0.027 & 30.0 & 5 & 0.0013 & 0.7462 & 0.0121 & 0.0979\\
+3 & -25.35 & 0.023 & 48.8 & 6 & 0.0021 & 1.4613 & 0.0141 & 0.1039\\
+4 & -25.49 & 0.022 & 48.8 & 6 & 0.0024 & 1.6597 & 0.0160 & 0.1101\\
+\bf5 & \bf-25.56 & \bf0.021 & \bf48.8 & \bf6 & \bf0.0026 & \bf1.7645 & \bf0.0170 & \bf0.1132\\
+\hline%
+\hline%
+ &    & $\epsilon$ &  &  &  &  & СКП & САП\\
+\hline%
+ &    & 219.942 &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.50,0.50}{ПРІАМ}}  & 1833920 & 1174.86\\
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{1.00,0.00,0.50}{МГВА}}  & 5468339 & 2068.64\\%Y=-0.15*X4-0.36*X3+1.7*X5
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.00,1.00}{РНМ}}  & 1892395 & 1182.36\\
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.00,0.00}{НМГВА}}  & 137580 & 324.91\\
+\hline \hline
+\end{tabular}
+\vskip -0.2in
+\end{table}
+
+\begin{figure}
+\safepdf{\centerline{\includegraphics[height=8cm]{APPENDIX/EPS/longley-residuals.pdf}}}
+{\centerline{\psfig{figure=APPENDIX/EPS/longley-residuals.eps,height=8cm}}}
+\caption{Залишки для моделі Лонглі: 1 --- ПРІАМ, 2 --- МГВА, 3 ---
+РНМ, 4 --- НМГВА, 5 --- смуга нечутливості.}
+\label{fig:longley-residuals}
+\end{figure}
+
+\begin{figure}
+\centering \vspace{10mm}
+\makebox[82mm][l]%
+{\safepdf{\includegraphics[height=6.5cm]{APPENDIX/EPS/longley_evi_cont.pdf}}
+{\psfig{figure=APPENDIX/EPS/longley_evi_cont.eps,height=6.5cm}}}
+\makebox[4mm]{}%
+\makebox[82mm][l]%
+{\safepdf{\includegraphics[height=6.5cm]{APPENDIX/EPS/longley_gen_cont.pdf}}
+{\psfig{figure=APPENDIX/EPS/longley_gen_cont.eps,height=6.5cm}}}
+\makebox[85mm][c]{(а)}\makebox[85mm][c]{(б)} \caption{Залежність (а)
+КБП і (б) СКПн моделі Лонглі від ширини смуги нечутливості
+$\epsilon$ для різних значень гіперпараметру $\beta$.}
+\end{figure}
+
+\clearpage
+
+\begin{table}{\bf Модель Філіппеллі}
+\tablecaption{Повний розв'язок оптимальної моделі Філіппеллі}
+\label{tbl:Solution-Filip}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+  \hline
+  № & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+  \hline
+  $\alpha$ & 0 & 16.6 &  0 &  0 &  0 &  0 & 26.1 &  0 &  0 & 0 & 0\\
+  \hline
+  $\alpha^\ast$ & 50 &  0 & 0 &  0 & 0 & 0 &  0 &  0 & 0 &  4.7 & 0\\
+  \hline
+  \hline
+  № & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22  \\
+  \hline
+  $\alpha$ & 0 &  0 & 50 & 0 & 0 &  0 &  0 &  0 & 0 &  0 &  0.5 \\
+  \hline
+  $\alpha^\ast$ & 0 &  0 & 0 &  0 & 43.1 &  0&  0 &  0 & 0 &  0 & 0\\
+  \hline
+  \hline
+  № & 23 & 24 & 25 & 26 & 27 & 28 & 29 & 30 & 31 & 32 & 33 \\
+  \hline
+  $\alpha$ &  0 & 0 &  0 & 0 &  0 & 0 &  0 &  0 & 0 &  0 & 17.8 \\
+  \hline
+  $\alpha^\ast$ & 0 &  0 &  0 & 0 &  0 & 0 &  6.9 & 0 & 6 & 0 & 0\\
+  \hline
+  $b$ & 0.55\\
+  \cline{1-2}
+\end{tabular}
+\vskip 0.2in
+%\vskip -0.2in
+%\end{table}
+%\clearpage
+%\begin{table}
+%\tablecaption{Процес байєсівської індукції оптимальної моделі
+%Філіппеллі} \label{tbl:Bayes-Filip}
+\begin{tabular}{cccccccrr}
+\hline
+№ &  КБП   & $\tilde{\epsilon}$ & $\beta$ & $N_{sv}$ & $\tilde{R}_{emp}$ & $\tilde{R}_{reg}$ & СКПн & САПн\\
+\hline
+1 & -51.36 & 0.050 & 20.0 & 6 & 0.0001 & 1.7466 & 0.0017 & 0.0327\\
+%2 & -62.13 & 0.036 & 30.0 & 9 & 0.0005 & 2.9354 & 0.0019 & 0.0319\\
+%3 & -70.37 & 0.033 & 50.0 & 10 & 0.0006 & 4.0021 & 0.0039 & 0.0393\\
+4 & -58.83 & 0.067 & 70.0 & 6 & 0.0000 & 1.1182 & 0.0035 & 0.0471\\
+%5 & -50.05 & 0.089 & 55.0 & 5 & 0.0000 & 0.8358 & 0.0058 & 0.0658\\
+%6 & -48.07 & 0.094 & 51.2 & 4 & 0.0000 & 0.7893 & 0.0065 & 0.0698\\
+%7 & -47.58 & 0.096 & 50.3 & 4 & 0.0000 & 0.7778 & 0.0067 & 0.0708\\
+%8 & -47.44 & 0.096 & 50.0 & 4 & 0.0000 & 0.7747 & 0.0067 & 0.0710\\
+9 & -62.31 & 0.052 & 50.0 & 6 & 0.0000 & 1.6281 & 0.0018 & 0.0335\\
+10 & -68.32 & 0.037 & 50.0 & 7 & 0.0004 & 3.1235 & 0.0017 & 0.0309\\
+11 & -69.87 & 0.034 & 50.0 & 8 & 0.0006 & 3.7439 & 0.0033 & 0.0371\\
+\bf12 & \bf-70.25 & \bf0.033 & \bf50.0 & \bf10 & \bf0.0006 & \bf3.9319 & \bf0.0038 & \bf0.0389\\
+\hline%
+\hline%
+ &    & $\epsilon$ &  &  &  &  & СКП & САП\\
+\hline%
+ &    & 0.0052 &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.50,0.50}{ПРІАМ}}  & 0.0001 & 0.0062\\
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{1.00,0.00,0.50}{МГВА}}  & 0.0004 & 0.0158\\%Y=-0.6+3.6*X1-2.4*X1^2
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.00,1.00}{РНМ}}  & 0.0003 & 0.0137\\
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.00,0.00}{НМГВА}}  & 0.0010 & 0.0246\\
+\hline \hline
+\end{tabular}
+\vskip -0.2in
+\end{table}
+
+\begin{figure}
+\safepdf{\centerline{\includegraphics[height=8cm]{APPENDIX/EPS/filip-residuals.pdf}}}
+{\centerline{\psfig{figure=APPENDIX/EPS/filip-residuals.eps,height=8cm}}}
+\caption{Залишки для моделі Філіппеллі.} \label{fig:filip-residuals}
+\end{figure}
+
+\begin{figure}
+\centering \vspace{10mm}
+\makebox[82mm][l]%
+{\safepdf{\includegraphics[height=6.5cm]{APPENDIX/EPS/filip_evi_cont.pdf}}
+{\psfig{figure=APPENDIX/EPS/filip_evi_cont.eps,height=6.5cm}}}
+\makebox[4mm]{}%
+\makebox[82mm][l]%
+{\safepdf{\includegraphics[height=6.5cm]{APPENDIX/EPS/filip_gen_cont.pdf}}
+{\psfig{figure=APPENDIX/EPS/filip_gen_cont.eps,height=6.5cm}}}
+\makebox[85mm][c]{(а)}\makebox[85mm][c]{(б)} \caption{Залежність (а)
+КБП і (б) СКПн моделі Філіппеллі від ширини смуги нечутливості
+$\epsilon$ для різних значень гіперпараметру $\beta$.}
+\end{figure}
+
+\clearpage
+
+\begin{table}{\bf Спрощена модель Фрідмана}
+\tablecaption{Повний розв'язок оптимальної спрощеної моделі
+Фрідмана} \label{tbl:Solution-SimpleFriedman}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+№ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+\hline $\alpha$ &  0 &  0 & 0 &  1.8 &  0 &  9.7 & 9.7 & 4.9 &
+9.7 &  0 \\
+\hline $\alpha^\ast$ &  7.2 &  9.7 &  4.2 &  0 &  5 & 0 & 0 & 0 &
+0 & 9.7\\
+\hline
+$b$ & 0.49\\
+\cline{1-2}
+\end{tabular}
+\vskip 0.2in
+%\vskip -0.2in
+%\end{table}
+%\begin{table}
+%\tablecaption{Процес байєсівської індукції оптимальної спрощеної
+%моделі Фрідмана} \label{Bayes-SimpleFriedman}
+\begin{tabular}{cccccccrr}
+\hline
+№ &  КБП   & $\tilde{\epsilon}$ & $\beta$ & $N_{sv}$ & $\tilde{R}_{emp}$ & $\tilde{R}_{reg}$ & СКПн & САПн\\
+\hline %
+1 & -6.05 & 0.080 & 6.6 & 6 & 0.0139 & 1.6537 & 0.0333 & 0.1444\\
+2 & -8.42 & 0.060 & 10.0 & 8 & 0.0221 & 2.9511 & 0.0314 & 0.1424\\
+3 & -8.66 & 0.027 & 9.7 & 10 & 0.0420 & 4.7686 & 0.0274 & 0.1339\\
+4 & -8.68 & 0.024 & 9.7 & 10 & 0.0442 & 4.9788 & 0.0275 & 0.1343\\
+5 & -8.69 & 0.023 & 9.7 & 10 & 0.0453 & 5.0839 & 0.0276 & 0.1345\\
+\bf6 & \bf-8.70 & \bf0.022 & \bf9.7 & \bf10 & \bf0.0459 & \bf5.1365 & \bf0.0276 & \bf0.1347\\
+\hline%
+\hline%
+ &    & $\epsilon$ &  &  &  &  & СКП & САП\\
+\hline%
+ &    & 0.231 &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.50,0.50}{ПРІАМ}}  & 3.100 & 1.427\\
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{1.00,0.00,0.50}{МГВА}}  & 6.813 & 2.070\\%Y=0.81-2.2*X2-1.8*X1^2+5.3*X1*X2
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.00,1.00}{РНМ}}  & 12.172 & 2.888\\
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.00,0.00}{НМГВА}}  & 9.830 & 2.711\\
+\hline \hline
+\end{tabular}
+\vskip -0.2in
+\end{table}
+
+\begin{figure}
+\safepdf{\centerline{\includegraphics[height=8cm]{APPENDIX/EPS/smplfriedman-residuals.pdf}}}
+{\centerline{\psfig{figure=APPENDIX/EPS/smplfriedman-residuals.eps,height=8cm}}}
+\caption{Залишки для спрощеної моделі Фрідмана.}
+\label{fig:smplfriedman-residuals}
+\end{figure}
+
+\begin{figure}
+\centering \vspace{10mm}
+\makebox[82mm][l]%
+{\safepdf{\includegraphics[height=6.5cm]{APPENDIX/EPS/smplfriedman_evi_cont.pdf}}
+{\psfig{figure=APPENDIX/EPS/smplfriedman_evi_cont.eps,height=6.5cm}}}
+\makebox[4mm]{}%
+\makebox[82mm][l]%
+{\safepdf{\includegraphics[height=6.5cm]{APPENDIX/EPS/smplfriedman_gen_cont.pdf}}
+{\psfig{figure=APPENDIX/EPS/smplfriedman_gen_cont.eps,height=6.5cm}}}
+\makebox[85mm][c]{(а)}\makebox[85mm][c]{(б)} \caption{Залежність (а)
+КБП і (б) СКПн спрощеної моделі Фрідмана від ширини смуги
+нечутливості $\epsilon$ для різних значень гіперпараметру $\beta$.}
+\end{figure}
+
+\clearpage
+
+\begin{table}{\bf Моделювання індексу споживчих цін}
+\tablecaption{Повний розв'язок оптимальної моделі ІСЦ}
+\label{tbl:Solution-CPI}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline%
+№ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14\\
+\hline%
+$\alpha$ &   4.1 &  0 &   0 &  27.7 &   0 &   0 &  0 & 0 & 0 & 0 & 0
+&  27.7 &  16.2 &   0 \\
+\hline%
+$\alpha^\ast$ &   0 &   0 & 0 & 0 & 0 & 0 & 23 &  0 &  11.6 & 27.7 &
+13.4 & 0 & 0 & 0\\
+\hline%
+$b$ & 0.56\\
+\cline{1-2}
+\end{tabular}
+\vskip 0.2in
+%\vskip -0.2in
+%\end{table}
+%\begin{table}
+%\tablecaption{Процес байєсівської індукції оптимальної моделі ІСЦ}
+%\label{tbl:Bayes-CPI}
+\begin{tabular}{cccccccrr}
+\hline
+№ &  КБП   & $\tilde{\epsilon}$ & $\beta$ & $N_{sv}$ & $\tilde{R}_{emp}$ & $\tilde{R}_{reg}$ & СКПн & САПн\\
+\hline
+
+1 & -22.18 & 0.050 & 20.0 & 6 & 0.0001 & 0.3550 & 0.0143 & 0.0997\\
+2 & -21.90 & 0.053 & 20.0 & 5 & 0.0000 & 0.2895 & 0.0163 & 0.1060\\
+3 & -22.51 & 0.050 & 21.0 & 6 & 0.0001 & 0.3562 & 0.0143 & 0.0997\\
+4 & -22.71 & 0.048 & 21.0 & 6 & 0.0007 & 0.5215 & 0.0126 & 0.0930\\
+5 & -23.04 & 0.045 & 21.5 & 6 & 0.0015 & 0.7372 & 0.0095 & 0.0802\\
+6 & -23.34 & 0.045 & 22.5 & 6 & 0.0015 & 0.7577 & 0.0095 & 0.0802\\
+7 & -23.85 & 0.043 & 23.8 & 6 & 0.0022 & 1.0208 & 0.0068 & 0.0679\\
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
+52 & -20.81 & 0.026 & 27.7 & 13 & 0.0204 & 8.2900 & 0.0027 & 0.0399\\
+53 & -24.73 & 0.027 & 27.7 & 13 & 0.0101 & 4.2970 & 0.0019 & 0.0308\\
+54 & -24.83 & 0.027 & 27.7 & 13 & 0.0099 & 4.2033 & 0.0020 & 0.0315\\
+55 & -25.99 & 0.027 & 27.7 & 8 & 0.0072 & 3.0336 & 0.0035 & 0.0437\\
+56 & \bf-26.01 & \bf0.027 & \bf27.7 & \bf8 & \bf0.0072 & \bf3.0505 &
+\bf0.0034 & \bf0.0435\\
+\hline%
+\hline%
+ &    & $\epsilon$ &  &  &  &  & СКП & САП\\
+\hline%
+ &    & 0.0194 &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.50,0.50}{ПРІАМ}}  & 0.002 & 0.032\\
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{1.00,0.00,0.50}{МГВА}}  & 0.069 & 0.225\\%Y=0.17-0.12*X4+1.8*X1*X3
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.00,1.00}{РНМ}}  & 0.025 & 0.133\\
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.00,0.00}{НМГВА}}  & 0.004 & 0.055\\
+\hline \hline
+\end{tabular}
+\vskip -0.2in
+\end{table}
+
+\begin{figure}
+\safepdf{\centerline{\includegraphics[height=8cm]{APPENDIX/EPS/cpi-residuals.pdf}}}
+{\centerline{\psfig{figure=APPENDIX/EPS/cpi-residuals.eps,height=8cm}}}
+\caption{Залишки для моделі ІСЦ.} \label{fig:cpi-residuals}
+\end{figure}
+
+\begin{figure}
+\centering \vspace{10mm}
+\makebox[82mm][l]%
+{\safepdf{\includegraphics[height=6.5cm]{APPENDIX/EPS/cpi_evi_cont.pdf}}
+{\psfig{figure=APPENDIX/EPS/cpi_evi_cont.eps,height=6.5cm}}}
+\makebox[4mm]{}%
+\makebox[82mm][l]%
+{\safepdf{\includegraphics[height=6.5cm]{APPENDIX/EPS/cpi_gen_cont.pdf}}
+{\psfig{figure=APPENDIX/EPS/cpi_gen_cont.eps,height=6.5cm}}}
+\makebox[85mm][c]{(а)}\makebox[85mm][c]{(б)} \caption{Залежність (а)
+КБП і (б) СКПн моделі ІСЦ від ширини смуги нечутливості $\epsilon$
+для різних значень гіперпараметру $\beta$.}
+\end{figure}
+
+\clearpage
+
+\begin{table}{\bf Моделювання реального споживання}
+\tablecaption{Повний розв'язок оптимальної моделі РСГ}
+\label{tbl:Solution-RCON}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline%
+№ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14\\
+\hline%
+$\alpha$ &   0 &   0 &   0 &  0 &  0 &  0 &   0 & 6.6 & 25.5 & 0 & 0
+&  0 &   0.3 &   0 \\
+\hline%
+$\alpha^\ast$ &  0 &   0 & 0 &  0 &   0 &  0 &  0 &   0 &   0 & 0 &
+29.8 & 2.6 & 0 &  0\\
+\hline%
+$b$ & 0.43\\
+\cline{1-2}
+\end{tabular}
+\vskip 0.2in
+%\vskip -0.2in
+%\end{table}
+%\begin{table}
+%\tablecaption{Процес байєсівської індукції оптимальної моделі РСГ}
+%\label{tbl:Bayes-RCON}
+\begin{tabular}{cccccccrr}
+\hline
+№ &  КБП   & $\tilde{\epsilon}$ & $\beta$ & $N_{sv}$ & $\tilde{R}_{emp}$ & $\tilde{R}_{reg}$ & СКПн & САПн\\
+\hline %
+1 & -8.96 & 0.210 & 20.0 & 3 & 0.0000 & 0.1943 & 0.0275 & 0.1534\\
+2 & -9.49 & 0.200 & 21.0 & 5 & 0.0002 & 0.3451 & 0.0274 & 0.1477\\
+3 & -9.60 & 0.190 & 21.0 & 5 & 0.0020 & 0.8185 & 0.0245 & 0.1417\\
+\vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
+30 & -10.28 & 0.203 & 30.0 & 4 & 0.0000 & 0.2396 & 0.0268 & 0.1489\\
+31 & -10.28 & 0.199 & 29.7 & 5 & 0.0003 & 0.4115 & 0.0272 & 0.1474\\
+32 & -10.28 & 0.199 & 29.8 & 5 & 0.0004 & 0.4334 & 0.0271 & 0.1472\\
+\bf33 & \bf-10.29 & \bf0.200 & \bf29.8 & \bf5 & \bf0.0001 & \bf0.3387 & \bf0.0275 & \bf0.1480\\
+\hline%
+\hline%
+ &    & $\epsilon$ &  &  &  &  & СКП & САП\\
+\hline%
+ &    & 0.116 &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.50,0.50}{ПРІАМ}}  & 0.009 & 0.086\\
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{1.00,0.00,0.50}{МГВА}}  & 0.014 & 0.101\\%Y=1.1-6.5*X2+16*X2^2-11*X2^3
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.00,1.00}{РНМ}}  & 0.034 & 0.165\\
+ &    &  &  \multicolumn{4}{c}{\textcolor[rgb]{0.00,0.00,0.00}{НМГВА}}  & 0.033 & 0.136\\
+\hline \hline
+\end{tabular}
+\vskip -0.2in
+\end{table}
+
+\begin{figure}
+\safepdf{\centerline{\includegraphics[height=8cm]{APPENDIX/EPS/rcon-residuals.pdf}}}
+{\centerline{\psfig{figure=APPENDIX/EPS/rcon-residuals.eps,height=8cm}}}
+\caption{Залишки для моделі РСГ.} \label{fig:rcon-residuals}
+\end{figure}
+
+\begin{figure}
+\centering \vspace{10mm}
+\makebox[82mm][l]%
+{\safepdf{\includegraphics[height=6.5cm]{APPENDIX/EPS/rcon_evi_cont.pdf}}
+{\psfig{figure=APPENDIX/EPS/rcon_evi_cont.eps,height=6.5cm}}}
+\makebox[4mm]{}%
+\makebox[82mm][l]%
+{\safepdf{\includegraphics[height=6.5cm]{APPENDIX/EPS/rcon_gen_cont.pdf}}
+{\psfig{figure=APPENDIX/EPS/rcon_gen_cont.eps,height=6.5cm}}}
+\makebox[85mm][c]{(а)}\makebox[85mm][c]{(б)} \caption{Залежність (а)
+КБП і (б) СКПн моделі РСГ від ширини смуги нечутливості $\epsilon$
+для різних значень гіперпараметру $\beta$.}
+\end{figure}
+
+
+\chapter{ІНФОРМАЦІЙНА СИСТЕМА ОБРОБКИ
+СТАТИСТИЧНИХ ДАНИХ}\label{InformationSystemScreenShots}
+
+\begin{figure}[th]
+\safepdf{\centerline{\includegraphics[width=17cm]{APPENDIX/EPS/scsh2.pdf}}}
+{\centerline{\psfig{figure=APPENDIX/EPS/scsh2.pdf,width=17cm}}}
+\caption{Приклад побудови моделі (скріншот моделі у формі
+Бернштейна).} \label{fig:scsh2}
+\end{figure}
+
+\begin{figure}[th]
+\safepdf{\centerline{\includegraphics[width=20cm,angle=90]{APPENDIX/EPS/scsh1.pdf}}}
+{\centerline{\psfig{figure=APPENDIX/EPS/scsh1.pdf,width=17cm}}}
+\caption{Приклад побудови моделі (скріншот ПРІАМ).}
+\label{fig:scsh1}
+\end{figure}
+
+\begin{figure}[th]
+\safepdf{\centerline{\includegraphics[width=20cm,angle=90]{APPENDIX/EPS/scsh3.pdf}}}
+{\centerline{\psfig{figure=APPENDIX/EPS/scsh3.pdf,width=17cm}}}
+\caption{Приклад побудови моделі (скріншот аналізу залежності КБП і
+СКП).} \label{fig:scsh3}
+\end{figure}
+
+\chapter{МАТЕМАТИЧНИЙ ДОДАТОК}
+\label{MathAppendix}
+
+\subsubsection{Приклад простого байєсівського
+висновку}\label{SimpleBayesianInference}
+
+Припустимо, що необхідно оцінити яка частина виборців $r$ (учасників
+голосування) країни $C$ скаже ``за'' на референдумі з питання $Q$.
+Нехай було проведено соціологічне опитування серед $n=10$ чоловік,
+$m=7$ з яких проголосують ``за''. Згідно теореми Байєса ми можемо
+обчислити апостеріорну щільність розподілу для $r$:
+$$
+f(r|n=10, m=7)=\frac{f(m=7|r, n=10)f(r)}{\int_0^1f(m=7|r,
+n=10)f(r)dr},
+$$
+де $f(r)$ --- апріорна щільність розподілу, $f(m=7|r, n=10)$ ---
+функція правдоподібності. Припустимо (момент суб'єктивізму), що
+апріорний ймовірнісний розподіл рівномірний на $[0;1]$, тобто
+$f(r)=1$. Припускаючи, що експерти випадкові, функція
+правдоподібності $L(r)=f(m=7|r, n=10)$ має вигляд біноміального
+розподілу для 7 успіхів з 10 спроб:
+$$
+Pr(m=7|r, n=10)=\dbinom{10}{7}r^7(1-r)^3.
+$$
+Нормалізуючий множник (знаменник, підтвердження) складе:
+$$
+\int_0^1f(m=7|r,
+n=10)f(r)dr=\int_0^1\dbinom{10}{7}r^7(1-r)^31dr=\dbinom{10}{7}\frac{1}{1320}.
+$$
+Таким чином апостеріорна щільність розподілу:
+$$
+f(r|n=10,
+m=7)=\frac{\dbinom{10}{7}r^7(1-r)^31}{\dbinom{10}{7}\frac{1}{1320}}=1320r^7(1-r)^3.
+$$
+Насправді, цікаво отримати ймовірність того, що більше половини
+виборців проголосують ``за'' і питання $Q$ буде прийнято. Зважаючи
+на симетрію рівномірного розподілу, апріорна ймовірність такої події
+1/2. Але після опитування апостеріорна ймовірність такої події:
+$$
+\int_{1/2}^11320r^7(1-r)^3dr\approx0.887.
+$$
+що приблизно відповідає 89\% успіху.
+
+
+\subsubsection{Гібридизація нечіткої логіки і нейронних мереж} \label{Neurofuzzy_Equivalence}
+
+\begin{proof}[Доведення теореми~\ref{main_neurofuzzy_equiv}]
+Задамо ймовірність (силу) правила ``якщо $\mathbf{x}\in A^i$, тоді
+$y\in B^j$'' як $c_{ij}$. При цьому $\sum_jc_{ij}=1$.
+\begin{enumerate}
+\item[] {\bf Етап фазифікації.} Для всіх значень входу
+$\mathbf{x}$ і виходу $y$ обчислюються значення
+$\mu_{A^i}(\mathbf{x})$, $\mu_{B^j}(y)$.
+\item[] {\bf Етап нечіткої імплікації.} Оскільки імплікація реалізується
+операцією добутку (а не мінімуму), то результат імплікації для
+кожного правила є $\mu_{A^i}(\mathbf{x})\mu_{B^j}(y)$.
+\item[] {\bf Етап агрегації.} Агрегація реалізується операцією зваженої суми,
+тож нечітке значення виходу складе:
+$$
+\mu_{A^i\rightarrow
+B^j}(y)=\sum_{ij}c_{ij}\mu_{A^i}(\mathbf{x})\mu_{B^j}(y)=
+\sum_i\mu_{A^i}(\mathbf{x})\sum_jc_{ij}\mu_{B^j}(y).
+$$
+\item[] {\bf Етап дефазифікації.} Для центроїдного методу:
+\begin{multline*} y(\mathbf{x})=\frac{\int\mu_{A^i\rightarrow
+B^j}(y)ydy}{\int\mu_{A^i\rightarrow B^j}(y)dy}=
+\frac{\sum_i\mu_{A^i}(\mathbf{x})\sum_jc_{ij}\int\mu_{B^j}(y)ydy}
+{\underbrace{\sum\nolimits_i\mu_{A^i}(\mathbf{x})}_{=1}\underbrace{\sum\nolimits_jc_{ij}}_{=1}\underbrace{\int\nolimits\mu_{B^j}(y)dy}_{=const}}
+=\\=\sum_i\mu_{A^i}(\mathbf{x})w_i,\quad\mbox{де}\quad
+w_i=\sum_jc_{ij}y^c_j,\quad\mbox{де}\quad
+y^c_j=\frac{\int\mu_{B^j}(y)ydy}{\int\mu_{B^j}(y)dy}.
+\end{multline*}
+\end{enumerate}
+\end{proof}
+
+\subsubsection{Приклад генерації нечітких правил за схемою
+К.Харріса}\label{FuzzyRuleGeneration}
+
+Покажемо яким чином можна сформувати базу нечітких правил для
+нейронечіткої моделі РСГ, отриманої в
+підрозділі~\ref{sec-rcon_modelling} Збалансована нейронечітка модель
+у формі Бернштейна має вигляд:
+\begin{multline}
+f_{\mbox{opt}}(\mathbf{x})=0.43+0.06\phi_0^1(x^1)-0.06\phi_1^1(x^1)-\\
+-0.58\phi_0^2(x^2)+0.13\phi_1^2(x^2)+0.45\phi_2^2(x^2).
+\end{multline}
+Тож нейронечіткі підмоделі в канонічній формі відповідно
+визначаються як:
+$$
+\begin{array}{l}
+f_1(x^1)=0.49\phi_0^1(x^1)+0.37\phi_1^1(x^1),\\
+f_2(x^2)=-0.15\phi_0^2(x^2)+0.56\phi_1^2(x^2)+0.88\phi_2^2(x^2).
+\end{array}
+$$
+
+Для простоти визначимо нечіткі множини для змінної виходу $RCON$
+через чотири B-сплайни першого порядку $N_0^1$, $N_1^1$, $N_2^1$,
+$N_3^1$ (\ref{b-splines}) визначені на вузлах
+$\{-1;~-0.5;~0;~0.5;~1;~1.5\}$, які відповідають нечітким змінним:
+{\em дуже низьке}, {\em низьке}, {\em середнє}, {\em високе} з
+центрами в точках $\{-0.5;~0;~0.5;~1\}$. Модель (\ref{rcon-nfmodel})
+визначає нечіткі множини для змінних входу $x^1\equiv R$, $x^2\equiv
+RDI$ через базисні поліноми Бернштейна першого $\phi_0^1$,
+$\phi_1^1$ та другого $\phi_0^2$, $\phi_1^2$, $\phi_2^2$ порядків
+відповідно. Вони відповідають нечітким змінним: {\em низька} та {\em
+висока} відсоткова ставка; {\em низькі}, {\em середні}, {\em високі}
+реальні доходи.
+
+Ймовірності правил, що індуковані нейронечіткою моделлю $f_1$, можна
+знайти розв'язавши систему:
+$$
+\left\{
+\begin{array}{rcl}
+0.49&=&-0.5c^1_{11}+0\cdot c^1_{12}+0.5c^1_{13} +1\cdot c^1_{14}\\
+0.37&=&-0.5c^1_{21}+0\cdot c^1_{22}+0.5c^1_{23} +1\cdot c^1_{24}
+\end{array}\right.\Leftrightarrow
+\left\{
+\begin{array}{ll}
+c^1_{12}=0.02;&c^1_{13}=0.98\\
+c^1_{22}=0.26;&c^1_{23}=0.74
+\end{array}\right.
+$$
+з обмеженнями $\sum_jc^1_{ij}=1$, $c^1_{ij}\in[0;1]$ і максимум два
+суміжні коефіцієнти ($c^1_{ij}$ і $c^1_{ij+1}$) ненульові для
+заданого $i$.
+
+Аналогічно для моделі $f_2$ можна скласти і розв'язати систему:
+$$
+\left\{
+\begin{array}{rcl}
+-0.15&=&-0.5c^2_{11}+0\cdot c^2_{12}+0.5c^2_{13} +1\cdot c^2_{14}\\
+0.56&=&-0.5c^2_{21}+0\cdot c^2_{22}+0.5c^2_{23} +1\cdot c^2_{24}\\
+0.88&=&-0.5c^2_{31}+0\cdot c^2_{32}+0.5c^2_{33} +1\cdot c^2_{34}
+\end{array}\right.\Leftrightarrow
+\left\{
+\begin{array}{ll}
+c^1_{11}=0.30;&c^1_{12}=0.70\\
+c^1_{23}=0.88;&c^1_{24}=0.12\\
+c^1_{33}=0.24;&c^1_{34}=0.76
+\end{array}\right.
+$$
+
+Тож нечіткі правила та їх значимість визначаються наступним чином:
+$$
+\begin{array}{l}
+\hookrightarrow \mbox{\small Правило 1: якщо {\em R} низька тоді {\em RCON} низьке (0.02) або середнє (0.98)}\\
+\hookrightarrow \mbox{\small Правило 2: якщо {\em R} висока тоді {\em RCON} низьке (0.26) або середнє (0.74)}\\
+\hookrightarrow \mbox{\small Правило 3: якщо {\em RDI} низькі тоді {\em RCON} дуже низьке (0.3) або низьке (0.7)}\\
+\hookrightarrow \mbox{\small Правило 4: якщо {\em RDI} середні тоді {\em RCON} середнє (0.88) або високе (0.12)}\\
+\hookrightarrow \mbox{\small Правило 5: якщо {\em RDI} високі тоді {\em RCON} середнє (0.24) або високе (0.76)}\\
+\end{array}
+$$
+
+Користуючись цими правилами можна робити висновки на основі неповної
+інформації. Наприклад, якщо немає даних щодо {\em RDI}, а відомо
+тільки, що {\em R} висока, то працює правило 2. Якщо відомі обидва
+фактори, то відповідні два правила можна комбінувати. На основі
+збалансованої моделі можна навіть зробити висновок щодо вихідної
+змінної в умовах повної невизначеності. В нашому випадку це
+$y=0.43$.
+
+
+\chapter{ДОКУМЕНТИ, ЯКІ ПІДТВЕРДЖУЮТЬ АПРОБАЦІЮ
+ОСНОВНИХ ВИСНОВКІВ І РЕЗУЛЬТАТІВ ДИСЕРТАЦІЙНОЇ РОБОТИ}
+\label{ApprobationDocuments}
+
+% Add real scanned documents
+\clearpage \thispagestyle{empty} \topmargin =-27mm \oddsidemargin
+=-5mm
+
+\begin{figure}
+\safepdf{\centerline{\includegraphics[width=20cm]{APPENDIX/EPS/vnedr1.jpg}}}
+{\centerline{\psfig{figure=APPENDIX/EPS/vnedr1.jpg,width=20cm}}}
+\end{figure}
+
+\clearpage \thispagestyle{empty} \topmargin =-27mm \oddsidemargin
+=-5mm
+\begin{figure}
+\safepdf{\centerline{\includegraphics[width=20cm]{APPENDIX/EPS/vnedr2.jpg}}}
+{\centerline{\psfig{figure=APPENDIX/EPS/vnedr2.jpg,width=20cm}}}
+\end{figure}
